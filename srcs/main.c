@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/17 22:03:44 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 00:25:58 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,22 @@ int ft_error(t_errcd err)
 	if (err == ERR_ACCESS_MAP)
 		ft_putendl_fd("Cub3d: Can't access path of the map\n", 2);
 	return (err);
+}
+
+void	ft_free_map(t_view *view)
+{
+	size_t y;
+
+	y = 0;
+	while(y < view->map.maxy)
+	{
+			free(view->map.tab[y]);
+			y++;
+	}
+	y = 0;
+	while(y < 4)
+		free(view->text[y++]);
+	free(view->map.tab);
 }
 
 void	ft_print_map_types(t_view *view)
@@ -38,6 +54,7 @@ void	ft_print_map_types(t_view *view)
 		}
 		printf("\n");
 		y++;
+		x = 0;
 	}
 }
 
@@ -49,7 +66,8 @@ int	main(int ac, char **av)
 	if (ac != 2)
 		return(ft_error(ERR_ARGS_NBR));
 	err = ft_create_map(av[1], &view);
-	ft_print_map_types(&view);
 	if (err != NO_ERROR)
 		return (ft_error(err));
+	ft_print_map_types(&view);
+	ft_free_map(&view);
 }

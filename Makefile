@@ -6,7 +6,7 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/17 16:13:20 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/17 23:25:10 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,6 +78,9 @@ $(LIBS_TARGET): FORCE
 	@echo "\033[1m\033[32m#-------------------------[COMPILATION LIBFT]-------------------------#\033[0m"
 	$(MAKE) -C $(@D)
 	@echo "\033[1m\033[32m#---------------------------[LIBFT COMPILED]--------------------------#\033[0m"
+	@echo "\033[1m\033[32m#-------------------------[COMPILATION LIBMLX]-------------------------#\033[0m"
+	$(MAKE) -C ./libmlx
+	@echo "\033[1m\033[32m#---------------------------[LIBMLX COMPILED]--------------------------#\033[0m"
 	@echo " "
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.c
@@ -90,10 +93,12 @@ fsanitize : fclean $(LIBS_TARGET) $(OBJS) $(INCS)
 clean :
 	$(RM) $(OBJS_DIR)
 	$(MAKE) $@ -C ./libft
+	$(MAKE) $@ -C ./libmlx
 
 fclean : clean
 	$(RM) $(NAME)
 	$(MAKE) $@ -C ./libft
+	$(MAKE) $@ -C ./libmlx
 
 re : fclean all
 

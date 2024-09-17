@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/17 21:49:34 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 00:14:12 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 
 typedef enum e_maptype
 {
-	INVALID = -1,
+	INVALID = 9,
 	GROUND = 0,
 	WALL   = 1,
 	VOID = 2,

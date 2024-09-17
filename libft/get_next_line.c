@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 13:41:44 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/01/18 04:20:59 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 00:17:32 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	*ft_gnlend(char **line, char *buffer, int *i)
 	return (*line);
 }
 
-char	*get_next_line(int fd)
+char	*get_next_line(int fd, char *oldline)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	char		*line;
@@ -85,6 +85,8 @@ char	*get_next_line(int fd)
 
 	i = 1;
 	line = NULL;
+	if (oldline)
+		free(oldline);
 	while (i && fd >= 0 && BUFFER_SIZE >= 1 && fd < OPEN_MAX && !read(fd, 0, 0))
 	{
 		if ((ft_gnlbeginning(&line, buffer, fd, &i)) == -1)

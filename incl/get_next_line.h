@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 13:41:47 by sbejaoui          #+#    #+#             */
-/*   Updated: 2023/11/09 15:56:51 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 00:15:28 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define OPEN_MAX 65534
 
 void	ft_bzero(void *s, size_t n);
-char	*get_next_line(int fd);
+char	*get_next_line(int fd, char *oldline);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strealloc(char *src, int n);
 char	*ft_strcat(char *dest, char *src, int size);
