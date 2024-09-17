@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/17 19:16:34 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/17 21:49:34 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,18 @@
 # define UP_ARROW_KEY 65437
 # define DOWN_ARROW_KEY 65433
 
+typedef enum e_maptype
+{
+	INVALID = -1,
+	GROUND = 0,
+	WALL   = 1,
+	VOID = 2,
+	SPAWN   = 3,
+} t_maptype;
+
 typedef struct s_vec3x1
 {
+	t_maptype type;
 	double	x;
 	double	y;
 	double	z;
@@ -39,7 +49,7 @@ typedef struct s_vec3x1
 
 typedef struct s_tab3x1
 {
-	t_vec3x1	*tab;
+	t_vec3x1	**tab;
 	size_t		max_size;
 	size_t		maxx;
 	size_t		maxy;
@@ -47,7 +57,7 @@ typedef struct s_tab3x1
 
 typedef struct s_view
 {
-	t_vec3x1	**map;
+	t_tab3x1	map;
 	char		*text[4];
 	t_vec3x1	fccolor[2];
 	int			bpp;
