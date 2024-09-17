@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 00:49:48 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 00:57:59 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ bool	ft_is_architecture_part(char *line)
 	size_t i;
 
 	i = 0;
-	if (ft_str_is_whitespace(line))
+	if (!line || ft_str_is_whitespace(line))
 		return (false);
 	while (line[i])
 	{
@@ -271,6 +271,8 @@ t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view, char *pat
 	y = 0;
 	close(*fd);
 	err = ft_size_map_y(path, &(view->map.maxy), &(view->map.maxx));
+	if (view->map.maxy <= 2)
+		err = ERR_INVALID_MAP;
 	if (err)
 		return (err);
 	view->map.tab = malloc(sizeof(t_vec3x1 *) * view->map.maxy);
@@ -314,7 +316,7 @@ t_errcd	ft_verify_map(int *fd, t_view *view, char *path)
 		return (err);
 	while (ft_str_is_whitespace(line))
 		line = get_next_line(*fd, line);
-	if (!*line)
+	if (!line || !*line)
 	{
 		// il faut free le view->map.tab
 		return (ERR_FILE_CONSTRUCTION);

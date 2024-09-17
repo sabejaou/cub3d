@@ -6,7 +6,7 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/17 23:25:10 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/18 01:04:24 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,12 +93,11 @@ fsanitize : fclean $(LIBS_TARGET) $(OBJS) $(INCS)
 clean :
 	$(RM) $(OBJS_DIR)
 	$(MAKE) $@ -C ./libft
-	$(MAKE) $@ -C ./libmlx
 
 fclean : clean
 	$(RM) $(NAME)
 	$(MAKE) $@ -C ./libft
-	$(MAKE) $@ -C ./libmlx
+	$(MAKE) clean -C ./libmlx
 
 re : fclean all
 
