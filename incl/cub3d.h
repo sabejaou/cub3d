@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/17 17:13:38 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/17 19:16:34 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct s_tab3x1
 
 typedef struct s_view
 {
-	t_tab3x1	*map;
+	t_vec3x1	**map;
 	char		*text[4];
 	t_vec3x1	fccolor[2];
 	int			bpp;

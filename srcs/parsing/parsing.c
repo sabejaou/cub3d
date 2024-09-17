@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/17 17:27:27 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/17 19:37:38 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ t_errcd	ft_set_colors(char *line, t_vec3x1 *colors)
 		return (ERR_FORMAT_TEXTURE);
 	else
 	{
-		colors->x = atoi(split[0]);
-		colors->y = atoi(split[1]);
-		colors->x = atoi(split[2]);
+		colors->x = ft_atoi(split[0]);
+		colors->y = ft_atoi(split[1]);
+		colors->x = ft_atoi(split[2]);
 		return (NO_ERROR);
 	}
 	free(split[0]);
@@ -156,6 +156,16 @@ t_errcd ft_verify_map_textures(int *fd, char **line, t_view *view)
 	
 }
 
+bool	ft_is_architecture_part()
+{
+	
+}
+
+t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view)
+{
+	t_vec3x1 **map;
+}
+
 t_errcd	ft_verify_map(int *fd, t_view *view)
 {
 	char	*line;
@@ -170,7 +180,7 @@ t_errcd	ft_verify_map(int *fd, t_view *view)
 		return (err);
 	while (ft_str_is_whitespace(line))
 		line = get_next_line(*fd);
-	err = ft_verify_map_architecture(fd, line);
+	err = ft_verify_map_architecture(fd, &line, view);
 	if (err)
 		return (err);
 	while (ft_str_is_whitespace(line))
@@ -180,7 +190,7 @@ t_errcd	ft_verify_map(int *fd, t_view *view)
 	return (NO_ERROR);
 }
 
-t_errcd ft_parse_map(char *path, t_tab3x1 **map, t_view *view)
+t_errcd ft_parse_map(char *path, t_view *view)
 {
 	int fd;
 	char *line;
@@ -193,14 +203,12 @@ t_errcd ft_parse_map(char *path, t_tab3x1 **map, t_view *view)
 
 t_errcd ft_create_map(char *path, t_view *view)
 {
-	t_tab3x1	**map;
 	t_errcd		err;
 	
 	if (access(path, F_OK | R_OK) == -1)
 		return (ERR_ACCESS_MAP);
-	err = ft_parse_map(path, map, view);
+	err = ft_parse_map(path, view);
 	if (err != NO_ERROR)
 		return (err);
-	view->map = map;
 	return (NO_ERROR);
 }
