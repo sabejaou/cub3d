@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:42:45 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/17 17:03:24 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:50:53 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef enum e_errcd
 	ERR_FORMAT_TEXTURE = -6,
 	ERR_COLOR_FORMAT = -7,
 	ERR_ALLOC = -8,
+	ERR_EXTENSION_MAP = -9,
 } t_errcd;
 
 #endif

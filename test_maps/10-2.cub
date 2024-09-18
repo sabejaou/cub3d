@@ -1,7 +1,7 @@
-NO ./texture/text.txt
-SO ./texture/text.txt
-WE ./texture/text.txt
-EA ./texture/text.txt
+NO ./texture/text.xpm
+SO ./texture/text.xpm
+WE ./texture/text.xpm
+EA ./texture/text.xpm
 
 F 220,100,0
 C 225,30,0

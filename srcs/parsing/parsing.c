@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 17:50:41 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 19:55:46 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,19 @@ bool	ft_str_is_whitespace(char *str)
 	return(true);
 }
 
+bool ft_good_extension(char *ext, char *ext_expected, int len)
+{
+	if (!ft_strncmp(ext_expected, ext, len))
+	{
+		if (ext)
+			free(ext);
+		return (1);
+	}
+	if (ext)
+		free(ext);
+	return (0);
+}
+
 t_errcd ft_verify_textures(char *compass ,char *line, char **structtext)
 {
 	int i;
@@ -43,7 +56,7 @@ t_errcd ft_verify_textures(char *compass ,char *line, char **structtext)
 			return (ERR_ALLOC);
 		while (split[i])
 			i++;
-		if (i != 2)
+		if (i != 2 || !ft_good_extension(ft_substr(split[1], ft_strlen(split[1]) - 5, 5), ".xpm\n", 6))
 			return (ERR_FORMAT_TEXTURE);
 		else
 		{
@@ -70,7 +83,7 @@ t_errcd	ft_set_colors(char *line, t_vec3x1 *colors)
 	while (split[i])
 		i++;
 	if (i != 3)
-		return (ERR_FORMAT_TEXTURE);
+		return (ERR_COLOR_FORMAT);
 	else
 	{
 		colors->x = ft_atoi(split[0]);
@@ -100,7 +113,7 @@ t_errcd	ft_verify_colors(char *compass, char *line, t_vec3x1 *colors)
 		while (split[i])
 			i++;
 		if (i != 2)
-			return (ERR_FORMAT_TEXTURE);
+			return (ERR_COLOR_FORMAT);
 		else
 		{
 			ft_set_colors(split[1], &colors[i]);
@@ -350,11 +363,24 @@ t_errcd ft_parse_map(char *path, t_view *view)
 t_errcd ft_create_map(char *path, t_view *view)
 {
 	t_errcd		err;
+	int i;
+	char *endl;
 	
 	if (access(path, F_OK | R_OK) == -1)
 		return (ERR_ACCESS_MAP);
+	if ((!ft_good_extension(ft_substr(path, ft_strlen(path) - 4, 4), ".cub", 5)))
+		return (ERR_EXTENSION_MAP);
 	err = ft_parse_map(path, view);
 	if (err != NO_ERROR)
 		return (err);
+	i = 0;
+	while (i <= 3)
+	{
+		endl = ft_strchr(view->text[i], '\n');
+		if (endl)
+			*endl = '\0';
+		if (access(view->text[i++], F_OK | R_OK) == -1)
+			return(ERR_ACCESS_TEXTURE);
+	}
 	return (NO_ERROR);
 }
