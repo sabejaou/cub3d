@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/18 00:14:12 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 18:44:53 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@
 
 typedef enum e_maptype
 {
-	INVALID = 9,
 	GROUND = 0,
-	WALL   = 1,
-	VOID = 2,
-	SPAWN   = 3,
+	SPAWN   = 1,
+	WALL   = 2,
+	VOID = 3,
+	INVALID = 4,
 } t_maptype;
 
 typedef struct s_vec3x1
@@ -53,6 +53,8 @@ typedef struct s_tab3x1
 	size_t		max_size;
 	size_t		maxx;
 	size_t		maxy;
+	size_t 		player_count;
+	bool		is_ground;
 }	t_tab3x1;
 
 typedef struct s_view
@@ -71,4 +73,5 @@ typedef struct s_view
 
 // Parsing
 t_errcd ft_create_map(char *path, t_view *view);
+t_errcd ft_scanmap(t_tab3x1 map);
 #endif

@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 00:57:59 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 17:50:41 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,13 @@ t_errcd	ft_verify_map_colors(int *fd, t_view *view, char **line)
 	err = NO_ERROR;
 	i = 0;
 	while (ft_str_is_whitespace(*line))
-		*line = get_next_line(*fd, *line);
+		*line = get_next_line(*fd, *line, 0);
 	while (line && i != 2)
 	{
 		err = ft_verify_colors(compass[i], *line, view->fccolor);
 		if (err)
 			return (err);
-		*line = get_next_line(*fd, *line);
+		*line = get_next_line(*fd, *line, 0);
 		if (!(*line))
 			return (ERR_INVALID_MAP);
 		i++;
@@ -150,7 +150,7 @@ t_errcd ft_verify_map_textures(int *fd, char **line, t_view *view)
 		err = ft_verify_textures(compass[i], *line, &view->text[i]);
 		if (err)
 			return (err);
-		*line = get_next_line(*fd, *line);
+		*line = get_next_line(*fd, *line, 0);
 		if (!(*line))
 			return (ERR_INVALID_MAP);
 		i++;
@@ -190,27 +190,35 @@ t_errcd	ft_size_map_y(char *path, size_t *maxy, size_t *maxx)
 	char *line;
 	int fd;
 
-	*maxy = 1;
+	*maxy = 0;
 	*maxx = 0;
 	fd = open(path, O_RDONLY);
+	get_next_line(0, NULL, 1);
 	if (fd <= 2)
 		return (ERR_ACCESS_MAP);
 	err = NO_ERROR;
 	line = NULL;
-	line = get_next_line(fd, line);
+	line = get_next_line(fd, line, 0);
 	while (!ft_is_architecture_part(line))
-		line = get_next_line(fd, line);
+	{
+		line = get_next_line(fd, line, 0);
+	}
 	if (!line)
 		return (ERR_INVALID_MAP);
-	*maxx = ft_strlen(line);
+	*maxx = ft_strlen(line) - 1;
 	while (ft_is_architecture_part(line))
 	{
 		(*maxy)++;
-		line = get_next_line(fd, line);
-		if (ft_strlen(line) > *maxx)
-			*maxx = ft_strlen(line) - 1;
+		line = get_next_line(fd, line, 0);
+		if (ft_strlen(line) > *maxx && ft_is_architecture_part(line))
+		{
+			if (ft_gnlstrchr(line, '\n') >= 0)
+				*maxx = ft_strlen(line) - 1;
+			else
+				*maxx = ft_strlen(line);
+		}
 	}
-	(*maxy)++;
+	printf("maxx:%zu mxxy:%zu\n", *maxx, *maxy);
 	free(line);
 	close(fd);
 	return (err);
@@ -238,7 +246,7 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 	y = 0;
 	x = 0;
 	while (!ft_is_architecture_part(*line))
-		*line = get_next_line(*fd, *line);
+		*line = get_next_line(*fd, *line, 0);
 	while ((*line) && y < view->map.maxy)
 	{
 		while (x < view->map.maxx)
@@ -255,9 +263,8 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 					x++;
 				}
 		}
-		if (**line)
-			*line = get_next_line(*fd, *line);
-		printf("line:%s\n", *line);
+		if (y < view->map.maxy)
+			*line = get_next_line(*fd, *line, 0);
 		y++;
 		x = 0;
 	}
@@ -271,16 +278,16 @@ t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view, char *pat
 	y = 0;
 	close(*fd);
 	err = ft_size_map_y(path, &(view->map.maxy), &(view->map.maxx));
-	if (view->map.maxy <= 2)
+	if (view->map.maxy < 3 || view->map.maxx < 3)
 		err = ERR_INVALID_MAP;
 	if (err)
-		return (err);
-	view->map.tab = malloc(sizeof(t_vec3x1 *) * view->map.maxy);
+		return (free(*line), err);
+	view->map.tab = ft_calloc(view->map.maxy, sizeof(t_vec3x1 *));
 	if (!view->map.tab)
 		return (ERR_ALLOC);
 	while (y < view->map.maxy)
 	{
-		view->map.tab[y] = malloc(sizeof(t_vec3x1) * view->map.maxx);
+		view->map.tab[y] = ft_calloc(view->map.maxx, sizeof(t_vec3x1));
 		if (!view->map.tab[y])
 		{
 			// il faut free tous ceux d'avant
@@ -291,7 +298,8 @@ t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view, char *pat
 	*fd = open(path, O_RDONLY);
 	if (*fd <= 2)
 		return (ERR_ACCESS_MAP);
-	*line = get_next_line(*fd, *line);
+	get_next_line(0, NULL, 1);
+	*line = get_next_line(*fd, *line, 0);
 	ft_set_map_points(fd, line, view);
 	return (NO_ERROR);
 }
@@ -303,22 +311,22 @@ t_errcd	ft_verify_map(int *fd, t_view *view, char *path)
 
 	err = NO_ERROR;
 	line = NULL;
-	line = get_next_line(*fd, line);
+	line = get_next_line(*fd, line, 0);
 	while (ft_str_is_whitespace(line))
-		line = get_next_line(*fd, line);
+		line = get_next_line(*fd, line, 0);
 	err = ft_verify_map_textures(fd, &line, view);
 	if (err)
 		return (err);
 	while (ft_str_is_whitespace(line))
-		line = get_next_line(*fd, line);
+		line = get_next_line(*fd, line, 0);
 	err = ft_verify_map_architecture(fd, &line, view, path);
 	if (err)
 		return (err);
 	while (ft_str_is_whitespace(line))
-		line = get_next_line(*fd, line);
-	if (!line || !*line)
+		line = get_next_line(*fd, line, 0);
+	if (line)
 	{
-		// il faut free le view->map.tab
+		free(line);
 		return (ERR_FILE_CONSTRUCTION);
 	}
 	free(line);

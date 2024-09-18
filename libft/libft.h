@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 15:55:46 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 00:17:13 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 16:52:12 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int				ft_count_c(char c, const char *s);
 # endif
 
 void			ft_gnlbzero(void *s, size_t n);
-char			*get_next_line(int fd, char *oldline);
+char			*get_next_line(int fd, char *oldline, int reset);
 char			*ft_gnlstrjoin(char *s1, char *s2);
 char			*ft_gnlstrealloc(char *src, int n);
 char			*ft_gnlstrcat(char *dest, char *src, int size);

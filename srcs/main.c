@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 01:03:10 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 18:43:38 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	ft_free_map(t_view *view)
 	size_t y;
 
 	y = 0;
-	while(y < view->map.maxy)
+	while(view->map.tab && y < view->map.maxy)
 	{
 			if (view->map.tab[y])
 				free(view->map.tab[y]);
@@ -80,5 +80,8 @@ int	main(int ac, char **av)
 	if (err != NO_ERROR)
 		return (ft_error(err, view));
 	ft_print_map_types(view);
+	err = ft_scanmap(view->map);
+	if (err != NO_ERROR)
+		return (ft_error(err, view));
 	ft_free_map(view);
 }

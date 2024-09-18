@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 13:41:44 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/18 00:17:32 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 16:51:39 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	*ft_gnlend(char **line, char *buffer, int *i)
 	return (*line);
 }
 
-char	*get_next_line(int fd, char *oldline)
+char	*get_next_line(int fd, char *oldline, int reset)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	char		*line;
@@ -87,6 +87,8 @@ char	*get_next_line(int fd, char *oldline)
 	line = NULL;
 	if (oldline)
 		free(oldline);
+	if (reset)
+		return (ft_bzero(buffer, BUFFER_SIZE), NULL);
 	while (i && fd >= 0 && BUFFER_SIZE >= 1 && fd < OPEN_MAX && !read(fd, 0, 0))
 	{
 		if ((ft_gnlbeginning(&line, buffer, fd, &i)) == -1)
@@ -100,9 +102,9 @@ char	*get_next_line(int fd, char *oldline)
 				return (NULL);
 			ft_gnlstrcat(line, buffer, -1);
 		}
-		if (!buffer[0] && i == 0)
+		if (!buffer[0] && i == 1)
 			return (line);
-		else if (buffer[0] || i == 0)
+		else if (buffer[0] || i == 1)
 			return (ft_gnlend(&line, buffer, &i));
 	}
 	return (NULL);

@@ -6,7 +6,7 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/18 01:04:24 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/18 17:52:15 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ SRCS =\
 SRCS += $(addprefix parsing/, $(SRCS_PARSING))
 SRCS_PARSING=\
 		parsing.c \
+		mapscan.c \
 
 SRCS := $(SRCS:%=$(SRCS_DIR)%)
 

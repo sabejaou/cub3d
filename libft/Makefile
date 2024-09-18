@@ -6,7 +6,7 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/04 15:56:34 by sabejaou          #+#    #+#              #
-#    Updated: 2024/02/13 13:28:07 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/18 14:12:22 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ OBJS = ${SRCS:.c=.o}
 CC = gcc
 RM = rm -f
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -g3
 
 %.o : %.c libft.h
 	${CC} ${FLAGS} -I includes -c $< -o $@
