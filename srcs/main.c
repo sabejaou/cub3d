@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/19 21:09:49 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:12:30 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,8 +141,6 @@ void	draw2dmap(t_view *view)
 			printf("1x:%f y:%f\n", view->map.tab[y][x].x, view->map.tab[y][x].y);
 			if (view->map.tab[y][x].type == WALL)
 				drawsquare(view->map.tab[y][x],  view, 0XFF0000, squareproportion);
-			else if (view->map.tab[y][x].type == GROUND)
-				drawsquare(view->map.tab[y][x],  view, 0XFFFFFF, squareproportion);
 			tmpx += squareproportion;
 			x++;
 			if (x < view->map.maxx)
