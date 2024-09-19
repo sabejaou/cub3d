@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/19 02:00:32 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:09:49 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,100 @@ void	ft_free_map(t_view *view)
 		free(view);
 }
 
+void	draw_line(t_vec3x1 *start, t_vec3x1 *end, t_view *view, int col)
+{
+	t_drawlineutils u;
+
+	u.i = 0;
+	u.dx = end->x - start->x;
+	u.dy = end->y - start->y;
+	if (fabs(u.dx) > fabs(u.dy))
+		u.steps = fabs(u.dx);
+	else
+		u.steps = fabs(u.dy);
+	u.x_inc = u.dx / (float)u.steps;
+	u.y_inc = u.dy / (float)u.steps;
+	u.x = start->x;
+	u.y = start->y;
+	while (u.i <= u.steps)
+	{
+		if (u.x >= 0 && u.y >= 0 && u.x < WINDOW_WIDTH - 4
+			&& u.y < WINDOW_HEIGHT - 4)
+			((int *)view->addr)[(int)u.y * (view->sl >> 2)
+				+ (int)u.x] = col;
+		u.x += u.x_inc;
+		u.y += u.y_inc;
+		u.i++;
+	}
+}
+
+void	drawsquare(t_vec3x1 start, t_view *view, int col, int sqprp)
+{
+	int x;
+	int y;
+	t_vec3x1 end;
+	t_vec3x1 tmp;
+
+	x = 0;
+	y = 0;
+	tmp.x = start.x;
+	tmp.y = start.y;
+	while (y <= sqprp)
+	{
+		end.x = start.x + sqprp;
+		end.y = tmp.y;
+		draw_line(&tmp, &end, view, col);
+		tmp.y += 1;
+		y++;
+	}
+	mlx_put_image_to_window(view->mlx_ptr, view->win_ptr, view->img, 0, 0);
+}
+
+void	draw2dmap(t_view *view)
+{
+	int squareproportion;
+	size_t y;
+	int tmpx;
+	int tmpy;
+	size_t x;
+
+	y = 0;
+	x = 0;
+	tmpx = 0;
+	tmpy = 0;
+	view->map.tab[y][x].y = 0;
+	if (view->map.maxy >= view->map.maxx)
+		squareproportion = WINDOW_HEIGHT / view->map.maxy;
+	else
+		squareproportion = WINDOW_HEIGHT / view->map.maxx;
+	printf("sqrprp:%d\n", squareproportion);
+	while(y < view->map.maxy)
+	{
+		view->map.tab[y][x].x = 0;
+		tmpx = view->map.tab[y][x].x;
+		while (x < view->map.maxx)
+		{
+			printf("1x:%f y:%f\n", view->map.tab[y][x].x, view->map.tab[y][x].y);
+			if (view->map.tab[y][x].type == WALL)
+				drawsquare(view->map.tab[y][x],  view, 0XFF0000, squareproportion);
+			else if (view->map.tab[y][x].type == GROUND)
+				drawsquare(view->map.tab[y][x],  view, 0XFFFFFF, squareproportion);
+			tmpx += squareproportion;
+			x++;
+			if (x < view->map.maxx)
+			{
+				view->map.tab[y][x].x = tmpx;
+				view->map.tab[y][x].y = tmpy;
+			}
+		}
+		tmpy += squareproportion;
+		y++;
+		x = 0;
+		if (y < view->map.maxy)
+			view->map.tab[y][x].y = tmpy;
+	}
+}
+
 int	key_press(int keycode, t_view *view)
 {
 	if (keycode == W_KEY)
@@ -81,7 +175,7 @@ int	key_press(int keycode, t_view *view)
 	view->img = mlx_new_image(view->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
 	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl,
 			&view->endian);
-	// draw2dmap(view);
+	draw2dmap(view);
 	return (0);
 }
 
