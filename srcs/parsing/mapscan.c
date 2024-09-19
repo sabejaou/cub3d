@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 17:52:00 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 18:47:07 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/18 22:58:18 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_errcd ft_is_valid(t_tab3x1 map, size_t y, size_t x)
 		return (ERR_INVALID_MAP);
 	if (map.tab[y - 1][x].type > 2 || map.tab[y + 1][x].type > 2)
 		return (ERR_INVALID_MAP);
-	if (map.tab[y][x + 1].type > 2 || map.tab[y][x + 1].type > 2)
+	if (map.tab[y][x - 1].type > 2 || map.tab[y][x + 1].type > 2)
 		return (ERR_INVALID_MAP);
 	return (NO_ERROR);
 }

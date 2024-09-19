@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 19:55:46 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/19 00:57:06 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,6 +264,8 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 	{
 		while (x < view->map.maxx)
 		{
+			view->map.tab[y][x].x = x;
+			view->map.tab[y][x].y = y;
 			if ((*line)[x])
 			{
 				view->map.tab[y][x].type = ft_define_map_type((*line)[x]);
@@ -273,6 +275,8 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 				while (x < view->map.maxx)
 				{
 					view->map.tab[y][x].type = VOID;
+					view->map.tab[y][x].x = x;
+					view->map.tab[y][x].y = y;
 					x++;
 				}
 		}

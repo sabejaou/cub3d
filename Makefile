@@ -6,7 +6,7 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/18 17:52:15 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/19 00:53:35 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ DEPS_BONUS = $(OBJS_BONUS:.o=.d)
 
 LIBS_TARGET = ./libft/libft.a
 
-MLX_LIB			=	-L./libmlx -lmlx -lXext -lX11
+MLX_LIB			=	-L./libmlx -lmlx -lXext -lX11 -lm
 
 # **********************************COMMANDS**************************************** #
 
