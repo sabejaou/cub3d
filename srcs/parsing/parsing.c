@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/19 00:57:06 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/20 01:43:56 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ t_errcd	ft_size_map_y(char *path, size_t *maxy, size_t *maxx)
 				*maxx = ft_strlen(line);
 		}
 	}
-	printf("maxx:%zu mxxy:%zu\n", *maxx, *maxy);
+	// printf("maxx:%zu mxxy:%zu\n", *maxx, *maxy);
 	free(line);
 	close(fd);
 	return (err);
@@ -269,6 +269,11 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 			if ((*line)[x])
 			{
 				view->map.tab[y][x].type = ft_define_map_type((*line)[x]);
+				if (view->map.tab[y][x].type == SPAWN)
+				{
+					view->player.x = x;
+					view->player.y = y;
+				}
 				x++;
 			}
 			else if (!(*line)[x] && x < view->map.maxx)

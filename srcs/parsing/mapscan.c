@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 17:52:00 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 22:58:18 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/20 01:47:38 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ t_errcd ft_is_valid_next(t_vec3x1 v, t_tab3x1 *map, size_t y, size_t x)
 		(map->player_count)++;
 		return(ft_is_valid(*map, y, x));
 	}
-	if (map->player_count > 1)
-		return (ERR_INVALID_MAP);
 	return (NO_ERROR);
 }
 
@@ -66,6 +64,8 @@ t_errcd ft_scanmap(t_tab3x1 map)
 		y++;
 		x = 0;
 	}
+	if (map.player_count != 1)
+		return (ERR_INVALID_MAP);
 	if (!map.is_ground)
 		return (ERR_INVALID_MAP);
 	return (NO_ERROR);

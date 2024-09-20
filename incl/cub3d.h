@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/19 00:51:54 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/20 02:39:24 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,15 @@ typedef struct s_view
 	t_tab3x1	map;
 	char		*text[4];
 	t_vec3x1	fccolor[2];
+	t_vec3x1	player;
 	int			bpp;
 	int			sl;
 	int			endian;
 	void		*mlx_ptr;
 	void		*win_ptr;
 	void		*img;
+	void		*player_img;
+	void		*player_addr;
 	char		*addr;
 }	t_view;
 

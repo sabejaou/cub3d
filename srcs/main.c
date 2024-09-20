@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/19 21:12:30 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/20 02:40:16 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ void	drawsquare(t_vec3x1 start, t_view *view, int col, int sqprp)
 		tmp.y += 1;
 		y++;
 	}
-	mlx_put_image_to_window(view->mlx_ptr, view->win_ptr, view->img, 0, 0);
 }
 
 void	draw2dmap(t_view *view)
@@ -138,7 +137,7 @@ void	draw2dmap(t_view *view)
 		tmpx = view->map.tab[y][x].x;
 		while (x < view->map.maxx)
 		{
-			printf("1x:%f y:%f\n", view->map.tab[y][x].x, view->map.tab[y][x].y);
+			// printf("1x:%f y:%f\n", view->map.tab[y][x].x, view->map.tab[y][x].y);
 			if (view->map.tab[y][x].type == WALL)
 				drawsquare(view->map.tab[y][x],  view, 0XFF0000, squareproportion);
 			tmpx += squareproportion;
@@ -155,25 +154,35 @@ void	draw2dmap(t_view *view)
 		if (y < view->map.maxy)
 			view->map.tab[y][x].y = tmpy;
 	}
+	mlx_put_image_to_window(view->mlx_ptr, view->win_ptr, view->img, 0, 0);
+	printf("playerx:%f playery:%f\n", view->player.x, view->player.y);
 }
 
 int	key_press(int keycode, t_view *view)
 {
+	int squareproportion;
+	
+	if (view->map.maxy >= view->map.maxx)
+		squareproportion = WINDOW_HEIGHT / view->map.maxy;
+	else
+		squareproportion = WINDOW_HEIGHT / view->map.maxx;
 	if (keycode == W_KEY)
-		printf("W PRESSED\n");
+		view->player.y *= 0.99;
 	else if (keycode == S_KEY)
-		printf("S PRESSED\n");
+		view->player.y *= 1.01;
 	else if (keycode == A_KEY)
-		printf("A PRESSED\n");
+		view->player.x *= 0.99;
 	else if (keycode == D_KEY)
-		printf("D PRESSED\n");
+		view->player.x *= 1.01;
 	else if (keycode == ESC_KEY)
 		ft_free_map_end_normal(view);
 	mlx_destroy_image(view->mlx_ptr, view->img);
-	view->img = mlx_new_image(view->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
-	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl,
+	view->player_img = mlx_new_image(view->mlx_ptr, squareproportion, squareproportion);
+	view->player_addr = mlx_get_data_addr(view->player_img, &view->bpp, &view->sl,
 			&view->endian);
-	draw2dmap(view);
+	drawsquare(view->player,  view, 0X0000FF, squareproportion);
+	mlx_put_image_to_window(view->mlx_ptr, view->win_ptr, view->player_img, 0, 0);
+	// drawplayer(view);
 	return (0);
 }
 
@@ -266,6 +275,7 @@ int	main(int ac, char **av)
 {
 	t_view *view;
 	t_errcd	err;
+	int squareproportion;
 	
 	view = ft_calloc(1, sizeof(t_view));
 	err = NO_ERROR;
@@ -274,6 +284,14 @@ int	main(int ac, char **av)
 	err = init_view(view, av);
 	if (err)
 		return (err);
+	if (view->map.maxy >= view->map.maxx)
+		squareproportion = WINDOW_HEIGHT / view->map.maxy;
+	else
+		squareproportion = WINDOW_HEIGHT / view->map.maxx;
+	printf("%f %f\n", view->player.x, view->player.y);
+	view->player.x *= squareproportion;
+	view->player.y *= squareproportion;
+	draw2dmap(view);
 	mlx_hook(view->win_ptr, 2, 1L << 0, (int (*)())key_press, view);
 	mlx_hook(view->win_ptr, 17, 0, (int (*)())ft_free_map_end_normal, view);
 	mlx_loop(view->mlx_ptr);
