@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 07:50:36 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 07:51:22 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,83 +276,126 @@ void fill_background(t_view *view)
     }
 }
 
+void init_ray_data(t_ray_data *data, Vector2f player_pos, float angle)
+{
+	data->ray_dir.x = cosf(angle);
+	data->ray_dir.y = sinf(angle);
+	data->step_size.x = sqrtf(1 + (data->ray_dir.y / data->ray_dir.x) * (data->ray_dir.y / data->ray_dir.x));
+	data->step_size.y = sqrtf(1 + (data->ray_dir.x / data->ray_dir.y) * (data->ray_dir.x / data->ray_dir.y));
+	data->map_check.x = floorf(player_pos.x);
+	data->map_check.y = floorf(player_pos.y);
+	data->ray_length_1d.x = 0;
+	data->ray_length_1d.y = 0;
+	data->step.x = 0;
+	data->step.y = 0;
+	data->distance = 0;
+	data->hit_vertical = 0;
+	data->texture_index = 0;
+}
+
+void calculate_step_and_ray_length(t_ray_data *data, Vector2f player_pos)
+{
+	if (data->ray_dir.x < 0)
+	{
+		data->step.x = -1;
+		data->ray_length_1d.x = (player_pos.x - data->map_check.x) * data->step_size.x;
+	}
+	else
+	{
+		data->step.x = 1;
+		data->ray_length_1d.x = (data->map_check.x + 1 - player_pos.x) * data->step_size.x;
+	}
+
+	if (data->ray_dir.y < 0)
+	{
+		data->step.y = -1;
+		data->ray_length_1d.y = (player_pos.y - data->map_check.y) * data->step_size.y;
+	}
+	else
+	{
+		data->step.y = 1;
+		data->ray_length_1d.y = (data->map_check.y + 1 - player_pos.y) * data->step_size.y;
+	}
+}
+
+int check_wall_hit(t_ray_data *data, t_view *view)
+{
+	if (data->map_check.x < 0 || data->map_check.x >= view->map.maxx || 
+		data->map_check.y < 0 || data->map_check.y >= view->map.maxy)
+	{
+		return 1;
+	}
+
+	if (view->map.tab[(int)data->map_check.y][(int)data->map_check.x].type == WALL)
+	{
+		if (data->hit_vertical)
+		{
+			data->texture_index = (data->step.x > 0) ? 3 : 2;
+		}
+		else
+		{
+			data->texture_index = (data->step.y > 0) ? 1 : 0;
+		}
+		return 1;
+	}
+	return 0;
+}
+
+void perform_dda(t_ray_data *data, t_view *view)
+{
+	int hit;
+
+	hit = 0;
+	while (!hit)
+	{
+		if (data->ray_length_1d.x < data->ray_length_1d.y)
+		{
+			data->map_check.x += data->step.x;
+			data->distance = data->ray_length_1d.x * 0.1;
+			data->ray_length_1d.x += data->step_size.x;
+			data->hit_vertical = 1;
+		}
+		else
+		{
+			data->map_check.y += data->step.y;
+			data->distance = data->ray_length_1d.y * 0.1;
+			data->ray_length_1d.y += data->step_size.y;
+			data->hit_vertical = 0;
+		}
+		hit = check_wall_hit(data, view);
+	}
+}
+
+RaycastHit calculate_hit_point(t_ray_data *data, Vector2f player_pos, int squareproportion)
+{
+	float exact_hit_x;
+	float exact_hit_y;
+	float wall_x;
+
+	if (data->hit_vertical)
+	{
+		exact_hit_x = data->map_check.x;
+		exact_hit_y = player_pos.y + (data->map_check.x - player_pos.x) * data->ray_dir.y / data->ray_dir.x;
+		wall_x = exact_hit_y - floor(exact_hit_y);
+	}
+	else
+	{
+		exact_hit_y = data->map_check.y;
+		exact_hit_x = player_pos.x + (data->map_check.y - player_pos.y) * data->ray_dir.x / data->ray_dir.y;
+		wall_x = exact_hit_x - floor(exact_hit_x);
+	}
+
+	return (RaycastHit){data->distance * squareproportion, data->texture_index, wall_x, (int)data->map_check.x, (int)data->map_check.y};
+}
+
 RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squareproportion)
 {
-    Vector2f ray_dir = {cosf(angle), sinf(angle)};
-    Vector2f step_size = {
-        sqrtf(1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)),
-        sqrtf(1 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))
-    };
-    
-    Vector2f map_check = {floorf(player_pos.x), floorf(player_pos.y)};
-    Vector2f ray_length_1d = {0, 0};
-    Vector2f step = {0, 0};
-    
-    if (ray_dir.x < 0) {
-        step.x = -1;
-        ray_length_1d.x = (player_pos.x - map_check.x) * step_size.x;
-    } else {
-        step.x = 1;
-        ray_length_1d.x = (map_check.x + 1 - player_pos.x) * step_size.x;
-    }
-    
-    if (ray_dir.y < 0) {
-        step.y = -1;
-        ray_length_1d.y = (player_pos.y - map_check.y) * step_size.y;
-    } else {
-        step.y = 1;
-        ray_length_1d.y = (map_check.y + 1 - player_pos.y) * step_size.y;
-    }
-    
-    float distance = 0;
-    int hit_vertical = 0;
-    int texture_index = 0;
-    
-    while (1) {
-        if (ray_length_1d.x < ray_length_1d.y) {
-            map_check.x += step.x;
-            distance = ray_length_1d.x * 0.1;
-            ray_length_1d.x += step_size.x;
-            hit_vertical = 1;
-        } else {
-            map_check.y += step.y;
-            distance = ray_length_1d.y * 0.1;
-            ray_length_1d.y += step_size.y;
-            hit_vertical = 0;
-        }
-        
-        if (map_check.x < 0 || map_check.x >= view->map.maxx || 
-            map_check.y < 0 || map_check.y >= view->map.maxy) {
-            break;
-        }
-        
-        if (view->map.tab[(int)map_check.y][(int)map_check.x].type == WALL) {
-            if (hit_vertical) {
-                texture_index = (step.x > 0) ? 3 : 2; // East : West
-            } else {
-                texture_index = (step.y > 0) ? 1 : 0; // South : North
-            }
-            break;
-        }
-    }
-    // À la fin de la fonction, juste avant le return :
-    float exact_hit_x, exact_hit_y;
-    if (hit_vertical) {
-        exact_hit_x = map_check.x;
-        exact_hit_y = player_pos.y + (map_check.x - player_pos.x) * ray_dir.y / ray_dir.x;
-    } else {
-        exact_hit_y = map_check.y;
-        exact_hit_x = player_pos.x + (map_check.y - player_pos.y) * ray_dir.x / ray_dir.y;
-    }
+	t_ray_data data;
 
-    float wall_x;
-    if (hit_vertical) {
-        wall_x = exact_hit_y - floor(exact_hit_y);
-    } else {
-        wall_x = exact_hit_x - floor(exact_hit_x);
-    }
-
-    return (RaycastHit){distance * squareproportion, texture_index, wall_x, (int)map_check.x, (int)map_check.y};
+	init_ray_data(&data, player_pos, angle);
+	calculate_step_and_ray_length(&data, player_pos);
+	perform_dda(&data, view);
+	return calculate_hit_point(&data, player_pos, squareproportion);
 }
 
 void ft_draw3d_view(t_view *view, int squareproportion) {

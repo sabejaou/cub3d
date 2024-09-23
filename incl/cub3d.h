@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 07:50:13 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 07:51:06 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,17 @@ typedef struct {
     float x;
 	float y;
 } Vector2f;
+
+typedef struct s_ray_data {
+	Vector2f ray_dir;
+	Vector2f step_size;
+	Vector2f map_check;
+	Vector2f ray_length_1d;
+	Vector2f step;
+	float distance;
+	int hit_vertical;
+	int texture_index;
+} t_ray_data;
 
 typedef struct {
     float distance;
