@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 15:54:56 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 00:56:09 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 09:01:22 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *str)
 	size_t	i;
 
 	if (!str)
-		return(0);
+		return (0);
 	i = 0;
 	while (str[i] != '\0')
 		i++;

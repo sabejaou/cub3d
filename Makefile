@@ -6,7 +6,7 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/19 00:53:35 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/23 08:40:26 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,12 +20,29 @@ SRCS_DIR = ./srcs/
 
 SRCS =\
 		main.c \
+		keypress.c \
+		keypress2.c \
+		init.c
 
 #------PARSING------#
 SRCS += $(addprefix parsing/, $(SRCS_PARSING))
 SRCS_PARSING=\
 		parsing.c \
+		parsing2.c \
+		parsing3.c \
+		parsing4.c \
 		mapscan.c \
+
+SRCS += $(addprefix draw/, $(SRCS_DRAW))
+SRCS_DRAW=\
+		draw3dmap.c \
+		drawminimap.c \
+		drawminimapinit.c
+
+SRCS += $(addprefix raycast/, $(SRCS_RC))
+SRCS_RC=\
+		raycast.c\
+		raycastinit.c\
 
 SRCS := $(SRCS:%=$(SRCS_DIR)%)
 

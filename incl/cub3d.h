@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 07:51:06 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 08:51:53 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,31 @@ typedef struct s_ray_data {
 	int texture_index;
 } t_ray_data;
 
+typedef struct s_draw_data {
+	Vector2f player_pos;
+	float fov;
+	float ray_step;
+	int squareproportion;
+} t_draw_data;
+
+typedef struct s_ray_result {
+	float perp_distance;
+	int line_height;
+	int draw_start;
+	int draw_end;
+	int tex_x;
+	double step;
+	double tex_pos;
+} t_ray_result;
+
+typedef struct s_move_data {
+	float new_x;
+	float new_y;
+	float move_speed;
+	float hitbox_radius;
+	int squareproportion;
+} t_move_data;
+
 typedef struct {
     float distance;
     int texture_index;
@@ -156,4 +181,32 @@ typedef struct s_drawlineutils
 // Parsing
 t_errcd ft_create_map(char *path, t_view *view);
 t_errcd ft_scanmap(t_tab3x1 map);
+void 	ft_draw3d_view(t_view *view, int squareproportion);
+RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squareproportion);
+int key_press(int keycode, t_view *view);
+void	ft_free_map_end_normal(t_view *view);
+void init_minimap_data(t_minimap_data *data, t_view *view);
+void draw_minimap(t_view *view, int squareproportion);
+void fill_background(t_view *view);
+void	draw_line(t_vec3x1 *start, t_vec3x1 *end, t_view *view, int col);
+void	drawsquare(t_vec3x1 start, t_view *view, int col, int sqprp);
+void init_ray_data(t_ray_data *data, Vector2f player_pos, float angle);
+RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squareproportion);
+t_errcd ft_init_verify_map(char **av, t_view *view);
+t_errcd	init_view(t_view *view, char **av);
+int ft_error(t_errcd err, t_view *view);
+bool	ft_is_architecture_part(char *line);
+bool ft_good_extension(char *ext, char *ext_expected, int len);
+t_errcd	ft_verify_map(int *fd, t_view *view, char *path);
+bool	ft_str_is_whitespace(char *str);
+t_errcd	ft_size_map_y(char *path, size_t *maxy, size_t *maxx);
+t_errcd	ft_verify_colors(char *compass, char *line, t_view *view, int j);
+t_maptype ft_define_map_type(char c);
+t_errcd ft_verify_textures(char *compass ,char *line, char **structtext);
+void	calculate_new_position(t_move_data *data, t_view *view, int keycode);
+int	check_wall_collision(t_move_data *data, t_view *view, size_t check_x, size_t check_y);
+void	init_move_data(t_move_data *data, t_view *view);
+int	is_collision(t_move_data *data, size_t check_x, size_t check_y);
+t_errcd	ft_verify_map_colors(int *fd, t_view *view, char **line);
+void	ft_free_map_partial(t_view *view, size_t y);
 #endif
