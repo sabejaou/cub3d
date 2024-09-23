@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 06:05:14 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 07:02:08 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,14 +199,6 @@ void ft_drawrays(t_view *view, int squareproportion)
         draw_line(&start, &end, view, 0x00FF00);
     }
 }
-void fill_background(t_view *view, int ceiling_color, int floor_color) {
-    for (int y = 0; y < WINDOW_HEIGHT; y++) {
-        for (int x = 0; x < WINDOW_WIDTH; x++) {
-            int color = (y < WINDOW_HEIGHT / 2) ? ceiling_color : floor_color;
-            ((int *)view->addr)[y * (view->sl >> 2) + x] = color;
-        }
-    }
-}
 
 void	drawsquareplayer(t_view *view, int col, int sqprp)
 {
@@ -331,7 +323,27 @@ typedef struct {
     float distance;
     int texture_index;
     float wall_x;
+    int map_x;  // Ajout: coordonnée x de la cellule touchée
+    int map_y;  // Ajout: coordonnée y de la cellule touchée
 } RaycastHit;
+
+void fill_background(t_view *view)
+{
+    int ceiling_color, floor_color;
+    
+    // Convertir les valeurs XYZ (RGB) en entier pour les couleurs
+	// printf("%d %d %d\n", fccolor[0].r, fccolor[0].g, fccolor[0].b);
+    ceiling_color = (view->ceil->r << 16) | (view->ceil->g << 8) | view->ceil->b;
+    floor_color = (view->floor->r << 16) | (view->floor->g << 8) | view->floor->b;
+    for (int y = 0; y < WINDOW_HEIGHT; y++)
+    {
+        for (int x = 0; x < WINDOW_WIDTH; x++)
+        {
+            int color = (y < WINDOW_HEIGHT / 2) ? ceiling_color : floor_color;
+            ((int *)view->addr)[y * (view->sl >> 2) + x] = color;
+        }
+    }
+}
 
 RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squareproportion) {
     Vector2f ray_dir = {cosf(angle), sinf(angle)};
@@ -367,12 +379,12 @@ RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squarepr
     while (1) {
         if (ray_length_1d.x < ray_length_1d.y) {
             map_check.x += step.x;
-            distance = ray_length_1d.x;
+            distance = ray_length_1d.x * 0.1;
             ray_length_1d.x += step_size.x;
             hit_vertical = 1;
         } else {
             map_check.y += step.y;
-            distance = ray_length_1d.y;
+            distance = ray_length_1d.y * 0.1;
             ray_length_1d.y += step_size.y;
             hit_vertical = 0;
         }
@@ -391,129 +403,75 @@ RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squarepr
             break;
         }
     }
-    
+    // À la fin de la fonction, juste avant le return :
+    float exact_hit_x, exact_hit_y;
+    if (hit_vertical) {
+        exact_hit_x = map_check.x;
+        exact_hit_y = player_pos.y + (map_check.x - player_pos.x) * ray_dir.y / ray_dir.x;
+    } else {
+        exact_hit_y = map_check.y;
+        exact_hit_x = player_pos.x + (map_check.y - player_pos.y) * ray_dir.x / ray_dir.y;
+    }
+
     float wall_x;
     if (hit_vertical) {
-        wall_x = player_pos.y + distance * ray_dir.y;
+        wall_x = exact_hit_y - floor(exact_hit_y);
     } else {
-        wall_x = player_pos.x + distance * ray_dir.x;
+        wall_x = exact_hit_x - floor(exact_hit_x);
     }
-    wall_x -= floorf(wall_x);
+
+    return (RaycastHit){distance * squareproportion, texture_index, wall_x, (int)map_check.x, (int)map_check.y};
+}
+
+void ft_draw3d_view(t_view *view, int squareproportion) {
+    Vector2f player_pos = {
+        view->player.x / squareproportion,
+        view->player.y / squareproportion
+    };
     
-    return (RaycastHit){distance * squareproportion, texture_index, wall_x};
-}
-
-void ft_draw3d_view(t_view *view, int squareproportion)
-{
-    int num_rays = WINDOW_WIDTH;
-    float fov = M_PI / 3; // 60 degrés de champ de vision
-    float max_distance = 20.0f * squareproportion;
-
-    // Remplir le fond
-    fill_background(view, 0x87CEEB, 0x8B4513); // Ciel bleu, sol marron
-
-    // Position du joueur
-    float player_x = view->player.x + squareproportion * 0.5;
-    float player_y = view->player.y + squareproportion * 0.5;
-
-    for (int i = 0; i < num_rays; i++)
-    {
-        float ray_angle = view->playerangle - fov / 2 + fov * i / (float)num_rays;
-        float ray_x = cos(ray_angle);
-        float ray_y = sin(ray_angle);
-
-        // Ray casting
-        float distance = 0;
-        int hit_wall = 0;
-        int texture_index = 0;
-        float wall_x = 0;
-
-        while (distance < max_distance && !hit_wall)
-        {
-            distance += 0.01f * squareproportion;
-
-            size_t map_x = (size_t)((player_x + ray_x * distance) / squareproportion);
-            size_t map_y = (size_t)((player_y + ray_y * distance) / squareproportion);
-
-            if (map_x >= view->map.maxx || map_y >= view->map.maxy)
-            {
-                hit_wall = 1;
-                distance = max_distance;
-            }
-            else if (view->map.tab[map_y][map_x].type == WALL)
-            {
-                hit_wall = 1;
-                
-                // Déterminer quelle face du mur a été touchée
-                float hit_x = player_x + ray_x * distance;
-                float hit_y = player_y + ray_y * distance;
-
-                if (fabs(hit_x - map_x * squareproportion) < fabs(hit_y - map_y * squareproportion))
-                {
-                    texture_index = (ray_x > 0) ? 3 : 2; // Est ou Ouest
-                    wall_x = hit_y - map_y * squareproportion;
-                }
-                else
-                {
-                    texture_index = (ray_y > 0) ? 1 : 0; // Sud ou Nord
-                    wall_x = hit_x - map_x * squareproportion;
-                }
-                
-                wall_x /= squareproportion; // Normaliser entre 0 et 1
-            }
+    float fov = M_PI / 3;
+    float ray_step = fov / WINDOW_WIDTH;
+	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
+    for (int x = 0; x < WINDOW_WIDTH; x++) {
+        float ray_angle = view->playerangle - fov / 2 + x * ray_step;
+        
+        RaycastHit hit = cast_ray(view, player_pos, ray_angle, squareproportion);
+        
+        float perp_distance = hit.distance * cosf(ray_angle - view->playerangle);
+        int line_height = (int)(WINDOW_HEIGHT / perp_distance);
+        
+        int draw_start = -line_height / 2 + WINDOW_HEIGHT / 2;
+        if (draw_start < 0) draw_start = 0;
+        int draw_end = line_height / 2 + WINDOW_HEIGHT / 2;
+        if (draw_end >= WINDOW_HEIGHT) draw_end = WINDOW_HEIGHT - 1;
+        
+        int tex_x = (int)(hit.wall_x * view->texture_width[hit.texture_index]);
+        if (hit.texture_index == 2 || hit.texture_index == 3) {
+            tex_x = view->texture_width[hit.texture_index] - tex_x - 1;
         }
-
-        if (hit_wall)
-        {
-            // Correction de la distorsion fisheye
-            float corrected_distance = distance * cos(ray_angle - view->playerangle);
-
-            // Calculer la hauteur de la ligne
-            int line_height = (int)(WINDOW_HEIGHT / corrected_distance);
+        
+        double step = 1.0 * view->texture_height[hit.texture_index] / line_height;
+        double tex_pos = (draw_start - WINDOW_HEIGHT / 2 + line_height / 2) * step;
+        
+        for (int y = draw_start; y <= draw_end; y++) {
+            int tex_y = (int)tex_pos & (view->texture_height[hit.texture_index] - 1);
+            tex_pos += step;
             
-            // Limiter la hauteur de la ligne
-            int draw_start = -line_height / 2 + WINDOW_HEIGHT / 2;
-            if (draw_start < 0) draw_start = 0;
-            int draw_end = line_height / 2 + WINDOW_HEIGHT / 2;
-            if (draw_end >= WINDOW_HEIGHT) draw_end = WINDOW_HEIGHT - 1;
+            int *texture_data = (int *)mlx_get_data_addr(view->textures[hit.texture_index], &view->bpp, &view->sl, &view->endian);
+            int color = texture_data[tex_y * view->texture_width[hit.texture_index] + tex_x];
 
-            // Calculer les coordonnées de texture
-            int tex_x = (int)(wall_x * view->texture_width[texture_index]);
-            if (texture_index == 2 || texture_index == 3)
-                tex_x = view->texture_width[texture_index] - tex_x - 1;
-            
-            // Dessiner la colonne texturée
-            double step = (double)view->texture_height[texture_index] / line_height;
-            double tex_pos = (draw_start - WINDOW_HEIGHT / 2 + line_height / 2) * step;
-
-            for (int y = draw_start; y <= draw_end; y++)
-            {
-                int tex_y = (int)tex_pos & (view->texture_height[texture_index] - 1);
-                tex_pos += step;
-                
-                if (tex_x >= 0 && tex_x < view->texture_width[texture_index] &&
-                    tex_y >= 0 && tex_y < view->texture_height[texture_index])
-                {
-                    int *texture_data = (int *)mlx_get_data_addr(view->textures[texture_index], &view->bpp, &view->sl, &view->endian);
-                    int color = texture_data[tex_y * view->texture_width[texture_index] + tex_x];
-
-                    // ... (apply darkness if needed)
-
-                    view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
-                    ((int *)view->addr)[y * (view->sl >> 2) + i] = color;
-                }
-            }
+            view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
+            ((int *)view->addr)[y * (view->sl >> 2) + x] = color;
         }
     }
 }
-
-
 
 int key_press(int keycode, t_view *view)
 {
     int squareproportion;
     float move_speed;
     float new_x, new_y;
+    float hitbox_radius; // Rayon de la hitbox du joueur
 
     if (view->map.maxy >= view->map.maxx)
         squareproportion = WINDOW_HEIGHT / view->map.maxy;
@@ -521,7 +479,10 @@ int key_press(int keycode, t_view *view)
         squareproportion = WINDOW_HEIGHT / view->map.maxx;
 
     // Définir la vitesse de déplacement
-    move_speed = 5.0f; // Ajustez cette valeur pour augmenter la vitesse
+    move_speed = 5.0f;
+
+    // Définir le rayon de la hitbox (plus petit que la moitié d'un carré)
+    hitbox_radius = squareproportion * 0.3f; // Par exemple, 30% de la taille d'un carré
 
     // Calculer les nouvelles positions basées sur l'angle de vue
     if (keycode == W_KEY || keycode == S_KEY || keycode == A_KEY || keycode == D_KEY)
@@ -554,23 +515,42 @@ int key_press(int keycode, t_view *view)
             new_y -= cos(view->playerangle) * move_speed;
         }
 
-        // Vérifier si le mouvement est valide
-        size_t map_x = (int)(new_x / squareproportion);
-        size_t map_y = (int)(new_y / squareproportion);
+        // Vérifier les collisions avec la nouvelle hitbox
+        int map_x = new_x / squareproportion;
+        int map_y = new_y / squareproportion;
 
-        // Vérification des limites de la carte et des collisions
-        if (map_x >= 0 && map_x < view->map.maxx && map_y >= 0 && map_y < view->map.maxy)
+        // Vérifier les cases adjacentes
+        for (int dy = -1; dy <= 1; dy++)
         {
-            // Vérification des collisions avec les murs pour toutes les directions
-            if (view->map.tab[map_y][map_x].type != WALL &&
-                view->map.tab[map_y][(int)((new_x + squareproportion - 1) / squareproportion)].type != WALL && // Droite
-                view->map.tab[(int)((new_y + squareproportion - 1) / squareproportion)][map_x].type != WALL && // Bas
-                view->map.tab[(int)((new_y + squareproportion - 1) / squareproportion)][(int)((new_x + squareproportion - 1) / squareproportion)].type != WALL) // Bas-Droite
+            for (int dx = -1; dx <= 1; dx++)
             {
-                view->player.x = new_x; // Mettre à jour la position x
-                view->player.y = new_y; // Mettre à jour la position y
+                size_t check_x = map_x + dx;
+                size_t check_y = map_y + dy;
+
+                if (check_x >= 0 && check_x < view->map.maxx && check_y >= 0 && check_y < view->map.maxy)
+                {
+                    if (view->map.tab[check_y][check_x].type == WALL)
+                    {
+                        // Calculer la distance entre le centre du joueur et le coin le plus proche du mur
+                        float wall_center_x = (check_x + 0.5f) * squareproportion;
+                        float wall_center_y = (check_y + 0.5f) * squareproportion;
+                        float dx = fmaxf(fabsf(new_x - wall_center_x) - squareproportion / 2, 0);
+                        float dy = fmaxf(fabsf(new_y - wall_center_y) - squareproportion / 2, 0);
+                        float distance = sqrtf(dx * dx + dy * dy);
+
+                        // Si la distance est inférieure au rayon de la hitbox, empêcher le mouvement
+                        if (distance < hitbox_radius)
+                        {
+                            return (0);
+                        }
+                    }
+                }
             }
         }
+
+        // Si aucune collision n'est détectée, mettre à jour la position du joueur
+        view->player.x = new_x;
+        view->player.y = new_y;
     }
     else if (keycode == A_ARROW_KEY)
     {
@@ -588,7 +568,7 @@ int key_press(int keycode, t_view *view)
     mlx_destroy_image(view->mlx_ptr, view->img);
     view->img = mlx_new_image(view->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
     view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
-    
+    fill_background(view);
     ft_draw3d_view(view, squareproportion);
 	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
     draw_minimap(view, squareproportion);
@@ -655,7 +635,7 @@ t_errcd ft_init_verify_map(char **av, t_view *view)
 	err = ft_create_map(av[1], view);
 	if (err != NO_ERROR)
 		return (ft_error(err, view));
-	ft_print_map_types(view);
+	// ft_print_map_types(view);
 	err = ft_scanmap(view->map);
 	if (err != NO_ERROR)
 		return (ft_error(err, view));
@@ -709,9 +689,10 @@ int	main(int ac, char **av)
 		squareproportion = WINDOW_HEIGHT / view->map.maxy;
 	else
 		squareproportion = WINDOW_HEIGHT / view->map.maxx;
-	printf("%f %f\n", view->player.x, view->player.y);
+	// printf("%f %f\n", view->player.x, view->player.y);
 	view->player.x *= squareproportion;
 	view->player.y *= squareproportion;
+	fill_background(view);
 	ft_draw3d_view(view, squareproportion);
 	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl,
 			&view->endian);
@@ -720,6 +701,7 @@ int	main(int ac, char **av)
 	// drawsquareplayer(view, 0X0000FF, squareproportion);
 	mlx_put_image_to_window(view->mlx_ptr, view->win_ptr, view->img, 0, 0);
 	mlx_hook(view->win_ptr, 2, 1L << 0, (int (*)())key_press, view);
+	// mlx_hook(view->win_ptr, 2, 1L << 0, (int (*)())key_release, view);
 	mlx_hook(view->win_ptr, 17, 0, (int (*)())ft_free_map_end_normal, view);
 	mlx_loop(view->mlx_ptr);
 	// ft_free_map(view);

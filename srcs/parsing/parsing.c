@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 01:20:06 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 06:57:06 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ t_errcd ft_verify_textures(char *compass ,char *line, char **structtext)
 		return(ERR_ACCESS_TEXTURE);
 }
 
-t_errcd	ft_set_colors(char *line, t_vec3x1 *colors)
+t_errcd	ft_set_colors(char *line, t_view *view, int j)
 {
 	int i;
 
@@ -86,9 +86,13 @@ t_errcd	ft_set_colors(char *line, t_vec3x1 *colors)
 		return (ERR_COLOR_FORMAT);
 	else
 	{
-		colors->x = ft_atoi(split[0]);
-		colors->y = ft_atoi(split[1]);
-		colors->x = ft_atoi(split[2]);
+		(view)->fccolor[j].r = ft_atoi(split[0]);
+		(view)->fccolor[j].g = ft_atoi(split[1]);
+		(view)->fccolor[j].b = ft_atoi(split[2]);
+		if (j == 1)
+			view->ceil = &(view)->fccolor[j];
+		else
+			view->floor = &(view)->fccolor[j];
 	}
 	free(split[0]);
 	free(split[1]);
@@ -99,7 +103,7 @@ t_errcd	ft_set_colors(char *line, t_vec3x1 *colors)
 	return (NO_ERROR);
 }
 
-t_errcd	ft_verify_colors(char *compass, char *line, t_vec3x1 *colors)
+t_errcd	ft_verify_colors(char *compass, char *line, t_view *view, int j)
 {
 	int i;
 
@@ -116,7 +120,7 @@ t_errcd	ft_verify_colors(char *compass, char *line, t_vec3x1 *colors)
 			return (ERR_COLOR_FORMAT);
 		else
 		{
-			ft_set_colors(split[1], &colors[i]);
+			ft_set_colors(split[1], view, j);
 			free(split[0]);
 			free(split[2]);
 			free(split);
@@ -139,7 +143,7 @@ t_errcd	ft_verify_map_colors(int *fd, t_view *view, char **line)
 		*line = get_next_line(*fd, *line, 0);
 	while (line && i != 2)
 	{
-		err = ft_verify_colors(compass[i], *line, view->fccolor);
+		err = ft_verify_colors(compass[i], *line, view, i);
 		if (err)
 			return (err);
 		*line = get_next_line(*fd, *line, 0);

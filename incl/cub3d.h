@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 04:42:19 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 06:45:36 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,14 @@ typedef struct s_vec3x1
 	double	z;
 }	t_vec3x1;
 
+typedef struct s_cols
+{
+	int	r;
+	int	g;
+	int	b;
+}	t_cols;
+
+
 typedef struct s_tab3x1
 {
 	t_vec3x1	**tab;
@@ -77,7 +85,9 @@ typedef struct s_view
     char *text[4];
     int texture_width[4];
     int texture_height[4];
-	t_vec3x1	fccolor[2];
+	t_cols	fccolor[2];
+	t_cols	*ceil;
+	t_cols	*floor;
 	t_vec3x1	player;
 	float		playerangle;
 	int			bpp;
