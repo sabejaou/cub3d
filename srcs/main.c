@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 06:02:54 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 06:05:14 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,55 +403,111 @@ RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squarepr
     return (RaycastHit){distance * squareproportion, texture_index, wall_x};
 }
 
-void ft_draw3d_view(t_view *view, int squareproportion) {
-    Vector2f player_pos = {
-        view->player.x / squareproportion,
-        view->player.y / squareproportion
-    };
-    
-    float fov = M_PI / 3;
-    float ray_step = fov / WINDOW_WIDTH;
-    
-    for (int x = 0; x < WINDOW_WIDTH; x++) {
-        float ray_angle = view->playerangle - fov / 2 + x * ray_step;
-        
-        RaycastHit hit = cast_ray(view, player_pos, ray_angle, squareproportion);
-        
-        float perp_distance = hit.distance * cosf(ray_angle - view->playerangle);
-        int line_height = (int)(WINDOW_HEIGHT / perp_distance);
-        
-        int draw_start = -line_height / 2 + WINDOW_HEIGHT / 2;
-        if (draw_start < 0) draw_start = 0;
-        int draw_end = line_height / 2 + WINDOW_HEIGHT / 2;
-        if (draw_end >= WINDOW_HEIGHT) draw_end = WINDOW_HEIGHT - 1;
-        
-        int tex_x = (int)(hit.wall_x * view->texture_width[hit.texture_index]);
-        if (hit.texture_index == 2 || hit.texture_index == 3) {
-            tex_x = view->texture_width[hit.texture_index] - tex_x - 1;
+void ft_draw3d_view(t_view *view, int squareproportion)
+{
+    int num_rays = WINDOW_WIDTH;
+    float fov = M_PI / 3; // 60 degrés de champ de vision
+    float max_distance = 20.0f * squareproportion;
+
+    // Remplir le fond
+    fill_background(view, 0x87CEEB, 0x8B4513); // Ciel bleu, sol marron
+
+    // Position du joueur
+    float player_x = view->player.x + squareproportion * 0.5;
+    float player_y = view->player.y + squareproportion * 0.5;
+
+    for (int i = 0; i < num_rays; i++)
+    {
+        float ray_angle = view->playerangle - fov / 2 + fov * i / (float)num_rays;
+        float ray_x = cos(ray_angle);
+        float ray_y = sin(ray_angle);
+
+        // Ray casting
+        float distance = 0;
+        int hit_wall = 0;
+        int texture_index = 0;
+        float wall_x = 0;
+
+        while (distance < max_distance && !hit_wall)
+        {
+            distance += 0.01f * squareproportion;
+
+            size_t map_x = (size_t)((player_x + ray_x * distance) / squareproportion);
+            size_t map_y = (size_t)((player_y + ray_y * distance) / squareproportion);
+
+            if (map_x >= view->map.maxx || map_y >= view->map.maxy)
+            {
+                hit_wall = 1;
+                distance = max_distance;
+            }
+            else if (view->map.tab[map_y][map_x].type == WALL)
+            {
+                hit_wall = 1;
+                
+                // Déterminer quelle face du mur a été touchée
+                float hit_x = player_x + ray_x * distance;
+                float hit_y = player_y + ray_y * distance;
+
+                if (fabs(hit_x - map_x * squareproportion) < fabs(hit_y - map_y * squareproportion))
+                {
+                    texture_index = (ray_x > 0) ? 3 : 2; // Est ou Ouest
+                    wall_x = hit_y - map_y * squareproportion;
+                }
+                else
+                {
+                    texture_index = (ray_y > 0) ? 1 : 0; // Sud ou Nord
+                    wall_x = hit_x - map_x * squareproportion;
+                }
+                
+                wall_x /= squareproportion; // Normaliser entre 0 et 1
+            }
         }
-        
-        double step = (double)view->texture_height[hit.texture_index] / line_height;
-        double tex_pos = (draw_start - WINDOW_HEIGHT / 2 + line_height / 2) * step;
-        
-        for (int y = draw_start; y <= draw_end; y++) {
-            int tex_y = (int)tex_pos & (view->texture_height[hit.texture_index] - 1);
-            tex_pos += step;
+
+        if (hit_wall)
+        {
+            // Correction de la distorsion fisheye
+            float corrected_distance = distance * cos(ray_angle - view->playerangle);
+
+            // Calculer la hauteur de la ligne
+            int line_height = (int)(WINDOW_HEIGHT / corrected_distance);
             
-            int *texture_data = (int *)mlx_get_data_addr(view->textures[hit.texture_index], &view->bpp, &view->sl, &view->endian);
-            int color = texture_data[tex_y * view->texture_width[hit.texture_index] + tex_x];
+            // Limiter la hauteur de la ligne
+            int draw_start = -line_height / 2 + WINDOW_HEIGHT / 2;
+            if (draw_start < 0) draw_start = 0;
+            int draw_end = line_height / 2 + WINDOW_HEIGHT / 2;
+            if (draw_end >= WINDOW_HEIGHT) draw_end = WINDOW_HEIGHT - 1;
+
+            // Calculer les coordonnées de texture
+            int tex_x = (int)(wall_x * view->texture_width[texture_index]);
+            if (texture_index == 2 || texture_index == 3)
+                tex_x = view->texture_width[texture_index] - tex_x - 1;
             
-            float darkness = 1.0f - (hit.distance / (20.0f * squareproportion));
-            if (darkness < 0) darkness = 0;
-            int r = ((color >> 16) & 0xFF) * darkness;
-            int g = ((color >> 8) & 0xFF) * darkness;
-            int b = (color & 0xFF) * darkness;
-            color = (r << 16) | (g << 8) | b;
-            
-            view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
-            ((int *)view->addr)[y * (view->sl >> 2) + x] = color;
+            // Dessiner la colonne texturée
+            double step = (double)view->texture_height[texture_index] / line_height;
+            double tex_pos = (draw_start - WINDOW_HEIGHT / 2 + line_height / 2) * step;
+
+            for (int y = draw_start; y <= draw_end; y++)
+            {
+                int tex_y = (int)tex_pos & (view->texture_height[texture_index] - 1);
+                tex_pos += step;
+                
+                if (tex_x >= 0 && tex_x < view->texture_width[texture_index] &&
+                    tex_y >= 0 && tex_y < view->texture_height[texture_index])
+                {
+                    int *texture_data = (int *)mlx_get_data_addr(view->textures[texture_index], &view->bpp, &view->sl, &view->endian);
+                    int color = texture_data[tex_y * view->texture_width[texture_index] + tex_x];
+
+                    // ... (apply darkness if needed)
+
+                    view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl, &view->endian);
+                    ((int *)view->addr)[y * (view->sl >> 2) + i] = color;
+                }
+            }
         }
     }
 }
+
+
 
 int key_press(int keycode, t_view *view)
 {
