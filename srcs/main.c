@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:45:36 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 09:55:29 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	ft_free_map_end_normal(t_view *view)
 	{
 		if (view->text[y])
 			free(view->text[y]);
+		if (view->textures[y])
+			mlx_destroy_image(view->mlx_ptr, view->textures[y]);
 		y++;
 	}
 	if (view->map.tab)
