@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 06:45:36 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 07:50:13 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,27 @@ typedef struct s_cols
 	int	b;
 }	t_cols;
 
+typedef struct {
+    float x;
+	float y;
+} Vector2f;
+
+typedef struct {
+    float distance;
+    int texture_index;
+    float wall_x;
+    int map_x;
+    int map_y;
+} RaycastHit;
+
+typedef struct s_minimap_data {
+	int minimap_width;
+	int minimap_height;
+	int start_x;
+	int start_y;
+	int wall_size;
+	int player_size;
+} t_minimap_data;
 
 typedef struct s_tab3x1
 {

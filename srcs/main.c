@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 07:02:08 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 07:50:36 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,94 +134,6 @@ void	draw_line(t_vec3x1 *start, t_vec3x1 *end, t_view *view, int col)
 	}
 }
 
-// void	ft_drawrays(t_view *view, int squareproportion)
-// {
-// 	t_vec3x1 end;
-// 	t_vec3x1 start;
-// 	int x;
-// 	int y;
-
-// 	start.x = view->player.x + squareproportion * 0.5;
-// 	start.y = view->player.y + squareproportion * 0.5;
-// 	x = start.x / squareproportion;
-// 	y = start.y / squareproportion;
-// 	end.x = start.x + cos(view->playerangle) * 7.0f;
-// 	end.y = start.y + sin(view->playerangle) * 7.0f;
-// 	printf("Y:%d\n", y);
-// 	while (view->map.tab[(int)floor(end.y / squareproportion)][x].type != WALL)
-// 		end.y -= 0.1;
-// 	draw_line(&start, &end, view, 0x00FF00);
-// }
-
-void ft_drawrays(t_view *view, int squareproportion)
-{
-    t_vec3x1 start;
-    t_vec3x1 end;
-    float fov;
-    int num_rays;
-    float ray_angle;
-    float max_distance;
-    float distance;
-    int i;
-    size_t map_x;
-    size_t map_y;
-
-    fov = M_PI / 3; // 60 degrés de champ de vision
-    num_rays = 250; // Nombre de rayons à dessiner
-    max_distance = 1000.0f;
-
-    start.x = view->player.x + squareproportion * 0.5;
-    start.y = view->player.y + squareproportion * 0.5;
-
-    for (i = 0; i < num_rays; i++)
-    {
-        ray_angle = view->playerangle - fov / 2 + fov * i / (num_rays - 1);
-        end = start;
-        distance = 0.0f;
-
-        while (distance < max_distance)
-        {
-            end.x = start.x + cos(ray_angle) * distance;
-            end.y = start.y + sin(ray_angle) * distance;
-
-            map_x = (int)floor(end.x / squareproportion);
-            map_y = (int)floor(end.y / squareproportion);
-
-            if (map_x < 0 || map_x >= view->map.maxx || map_y < 0 || map_y >= view->map.maxy)
-                break;
-
-            if (view->map.tab[map_y][map_x].type == WALL)
-                break;
-
-            distance += 0.1;
-        }
-
-        draw_line(&start, &end, view, 0x00FF00);
-    }
-}
-
-void	drawsquareplayer(t_view *view, int col, int sqprp)
-{
-	int x;
-	int y;
-	t_vec3x1 end;
-	t_vec3x1 tmp;
-
-	ft_drawrays(view, sqprp);
-	x = 0;
-	y = 0;
-	tmp.x = view->player.x;
-	tmp.y = view->player.y;
-	while (y <= sqprp)
-	{
-		end.x = tmp.x + sqprp;
-		end.y = tmp.y;
-		draw_line(&tmp, &end, view, col);
-		tmp.y += 1;
-		y++;
-	}
-}
-
 void	drawsquare(t_vec3x1 start, t_view *view, int col, int sqprp)
 {
 	int x;
@@ -243,96 +155,115 @@ void	drawsquare(t_vec3x1 start, t_view *view, int col, int sqprp)
 	}
 }
 
-void draw_minimap(t_view *view, int squareproportion)
+void init_minimap_data(t_minimap_data *data, t_view *view)
 {
-    int minimap_width = 400; // Largeur de la minimap
-    int minimap_height = 400; // Hauteur de la minimap
-    int start_x = 10; // Position X dans la fenêtre
-    int start_y = 10; // Position Y dans la fenêtre
-
-    // Calculer la taille maximum pour les murs et le joueur
-    int wall_size = fmin(minimap_width / view->map.maxx, minimap_height / view->map.maxy);
-    int player_size = wall_size; // Utiliser la même taille pour le joueur
-
-    // Dessiner le fond de la minimap
-    for (int y = 0; y < minimap_height; y++)
-    {
-        for (int x = 0; x < minimap_width; x++)
-        {
-            ((int *)view->addr)[(start_y + y) * (view->sl >> 2) + (start_x + x)] = 0x000000; // Remplir avec noir
-        }
-    }
-
-    // Dessiner les murs sur la minimap
-    for (size_t map_y = 0; map_y < view->map.maxy; map_y++)
-    {
-        for (size_t map_x = 0; map_x < view->map.maxx; map_x++)
-        {
-            if (view->map.tab[map_y][map_x].type == WALL)
-            {
-                // Calculer les coordonnées sur la minimap
-                int mini_x = start_x + (map_x * minimap_width / view->map.maxx);
-                int mini_y = start_y + (map_y * minimap_height / view->map.maxy);
-
-                // Utiliser drawsquare pour dessiner le mur
-                t_vec3x1 wall_position;
-                wall_position.x = mini_x;
-                wall_position.y = mini_y;
-                wall_position.z = 0;
-
-                drawsquare(wall_position, view, 0xFFFFFF, wall_size); // Mur en blanc
-            }
-        }
-    }
-
-    // Dessiner le joueur sur la minimap
-    int player_mini_x = start_x + (view->player.x / squareproportion * minimap_width / view->map.maxx);
-    int player_mini_y = start_y + (view->player.y / squareproportion * minimap_height / view->map.maxy);
-    
-    // Utiliser drawsquare pour dessiner le joueur
-    t_vec3x1 player_position;
-    player_position.x = player_mini_x;
-    player_position.y = player_mini_y;
-    player_position.z = 0;
-
-    drawsquare(player_position, view, 0xFF0000, player_size); // Joueur en rouge
-
-    // Dessiner la direction du joueur
-    float direction_length = player_size * 2; // Longueur de la flèche représentant la direction
-    float dir_x = cos(view->playerangle) * direction_length;
-    float dir_y = sin(view->playerangle) * direction_length;
-
-    t_vec3x1 direction_start;
-    direction_start.x = player_mini_x + player_size * 0.5;
-    direction_start.y = player_mini_y + player_size * 0.5;
-
-    t_vec3x1 direction_end;
-    direction_end.x = player_mini_x + dir_x;
-    direction_end.y = player_mini_y + dir_y;
-
-    draw_line(&direction_start, &direction_end, view, 0xFFFF00); // Flèche en jaune
+	data->minimap_width = 400;
+	data->minimap_height = 400;
+	data->start_x = 10;
+	data->start_y = 10;
+	data->wall_size = fmin(data->minimap_width / view->map.maxx, data->minimap_height / view->map.maxy);
+	data->player_size = data->wall_size;
 }
 
-#include <float.h>
+void draw_minimap_background(t_view *view, t_minimap_data *data)
+{
+	int x;
+	int y;
 
-typedef struct {
-    float x, y;
-} Vector2f;
+	y = 0;
+	while (y < data->minimap_height)
+	{
+		x = 0;
+		while (x < data->minimap_width)
+		{
+			((int *)view->addr)[(data->start_y + y) * (view->sl >> 2) + (data->start_x + x)] = 0x000000;
+			x++;
+		}
+		y++;
+	}
+}
 
-typedef struct {
-    float distance;
-    int texture_index;
-    float wall_x;
-    int map_x;  // Ajout: coordonnée x de la cellule touchée
-    int map_y;  // Ajout: coordonnée y de la cellule touchée
-} RaycastHit;
+void draw_minimap_walls(t_view *view, t_minimap_data *data)
+{
+	size_t map_x;
+	size_t map_y;
+	int mini_x;
+	int mini_y;
+	t_vec3x1 wall_position;
+
+	map_y = 0;
+	while (map_y < view->map.maxy)
+	{
+		map_x = 0;
+		while (map_x < view->map.maxx)
+		{
+			if (view->map.tab[map_y][map_x].type == WALL)
+			{
+				mini_x = data->start_x + (map_x * data->minimap_width / view->map.maxx);
+				mini_y = data->start_y + (map_y * data->minimap_height / view->map.maxy);
+				wall_position.x = mini_x;
+				wall_position.y = mini_y;
+				wall_position.z = 0;
+				drawsquare(wall_position, view, 0xFFFFFF, data->wall_size);
+			}
+			map_x++;
+		}
+		map_y++;
+	}
+}
+
+void draw_minimap_player(t_view *view, t_minimap_data *data, int squareproportion)
+{
+	int player_mini_x;
+	int player_mini_y;
+	t_vec3x1 player_position;
+
+	player_mini_x = data->start_x + (view->player.x / squareproportion * data->minimap_width / view->map.maxx);
+	player_mini_y = data->start_y + (view->player.y / squareproportion * data->minimap_height / view->map.maxy);
+	player_position.x = player_mini_x;
+	player_position.y = player_mini_y;
+	player_position.z = 0;
+	drawsquare(player_position, view, 0xFF0000, data->player_size);
+}
+
+void draw_player_direction(t_view *view, t_minimap_data *data, int player_mini_x, int player_mini_y)
+{
+	float direction_length;
+	float dir_x;
+	float dir_y;
+	t_vec3x1 direction_start;
+	t_vec3x1 direction_end;
+
+	direction_length = data->player_size * 2;
+	dir_x = cos(view->playerangle) * direction_length;
+	dir_y = sin(view->playerangle) * direction_length;
+	direction_start.x = player_mini_x + data->player_size * 0.5;
+	direction_start.y = player_mini_y + data->player_size * 0.5;
+	direction_end.x = player_mini_x + dir_x;
+	direction_end.y = player_mini_y + dir_y;
+	draw_line(&direction_start, &direction_end, view, 0xFFFF00);
+}
+
+void draw_minimap(t_view *view, int squareproportion)
+{
+	t_minimap_data data;
+	int player_mini_x;
+	int player_mini_y;
+
+	init_minimap_data(&data, view);
+	draw_minimap_background(view, &data);
+	draw_minimap_walls(view, &data);
+	draw_minimap_player(view, &data, squareproportion);
+	player_mini_x = data.start_x + (view->player.x / squareproportion * data.minimap_width / view->map.maxx);
+	player_mini_y = data.start_y + (view->player.y / squareproportion * data.minimap_height / view->map.maxy);
+	draw_player_direction(view, &data, player_mini_x, player_mini_y);
+}
 
 void fill_background(t_view *view)
 {
-    int ceiling_color, floor_color;
+    int ceiling_color;
+	int	floor_color;
     
-    // Convertir les valeurs XYZ (RGB) en entier pour les couleurs
-	// printf("%d %d %d\n", fccolor[0].r, fccolor[0].g, fccolor[0].b);
     ceiling_color = (view->ceil->r << 16) | (view->ceil->g << 8) | view->ceil->b;
     floor_color = (view->floor->r << 16) | (view->floor->g << 8) | view->floor->b;
     for (int y = 0; y < WINDOW_HEIGHT; y++)
@@ -345,7 +276,8 @@ void fill_background(t_view *view)
     }
 }
 
-RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squareproportion) {
+RaycastHit cast_ray(t_view *view, Vector2f player_pos, float angle, int squareproportion)
+{
     Vector2f ray_dir = {cosf(angle), sinf(angle)};
     Vector2f step_size = {
         sqrtf(1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)),
