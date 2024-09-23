@@ -6,11 +6,11 @@
 #    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/23 08:40:26 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/09/23 10:25:06 by sabejaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = cub3d
+NAME = cub3D
 
 LIBS = libft.a
 

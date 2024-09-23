@@ -1,2 +1,0 @@
-Norme sur GNL 28 lignes
-Norme dans parsing, review it
