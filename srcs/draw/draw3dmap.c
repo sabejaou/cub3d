@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 07:57:42 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:28:44 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:23:17 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	init_draw_data(t_draw_data *data, t_view *view, int squareproportion)
 	data->squareproportion = squareproportion;
 }
 
-void	calculate_ray_result(t_ray_result *result, RaycastHit hit,
+void	calculate_ray_result(t_ray_result *result, t_raycast_hit hit,
 		float ray_angle, t_view *view)
 {
 	result->perp_distance = hit.distance * cosf(ray_angle - view->playerangle);
@@ -74,7 +74,7 @@ void	ft_draw3d_view(t_view *view, int squareproportion)
 	t_ray_result	result;
 	int				x;
 	float			ray_angle;
-	RaycastHit		hit;
+	t_raycast_hit	hit;
 
 	init_draw_data(&data, view, squareproportion);
 	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl,

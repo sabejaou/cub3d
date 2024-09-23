@@ -6,13 +6,13 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:07:24 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:15:52 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:17:12 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../incl/cub3d.h"
 
-void	init_ray_data(t_ray_data *data, Vector2f player_pos, float angle)
+void	init_ray_data(t_ray_data *data, t_vector2f player_pos, float angle)
 {
 	data->ray_dir.x = cosf(angle);
 	data->ray_dir.y = sinf(angle);

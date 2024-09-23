@@ -6,13 +6,13 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:06:55 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:20:14 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:17:34 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../incl/cub3d.h"
 
-void	calculate_step_and_ray_length(t_ray_data *data, Vector2f player_pos)
+void	calculate_step_and_ray_length(t_ray_data *data, t_vector2f player_pos)
 {
 	if (data->ray_dir.x < 0)
 	{
@@ -93,7 +93,7 @@ void	perform_dda(t_ray_data *data, t_view *view)
 	}
 }
 
-RaycastHit	calculate_hit_point(t_ray_data *data, Vector2f player_pos,
+t_raycast_hit	calculate_hit_point(t_ray_data *data, t_vector2f player_pos,
 		int squareproportion)
 {
 	float	exact_hit_x;
@@ -114,12 +114,12 @@ RaycastHit	calculate_hit_point(t_ray_data *data, Vector2f player_pos,
 			* data->ray_dir.x / data->ray_dir.y;
 		wall_x = exact_hit_x - floor(exact_hit_x);
 	}
-	return ((RaycastHit){data->distance * squareproportion,
+	return ((t_raycast_hit){data->distance * squareproportion,
 		data->texture_index, wall_x,
 		(int)data->map_check.x, (int)data->map_check.y});
 }
 
-RaycastHit	cast_ray(t_view *view, Vector2f player_pos,
+t_raycast_hit	cast_ray(t_view *view, t_vector2f player_pos,
 		float angle, int squareproportion)
 {
 	t_ray_data	data;

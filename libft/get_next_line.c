@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 13:41:44 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 09:09:55 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:00:56 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,15 @@ void	*ft_gnlend(char **line, char *buffer, int *i)
 	return (*line);
 }
 
+int	ft_cheat(char **line, char *buffer)
+{
+	*line = ft_gnlstrealloc(*line, BUFFER_SIZE);
+	if (!*line)
+		return (0);
+	ft_gnlstrcat(*line, buffer, -1);
+	return (1);
+}
+
 char	*get_next_line(int fd, char *oldline, int reset)
 {
 	static char	buffer[BUFFER_SIZE + 1];
@@ -96,12 +105,8 @@ char	*get_next_line(int fd, char *oldline, int reset)
 		if (ft_gnlstrchr(line, '\n') != -1)
 			return (line);
 		if (ft_gnlstrchr(buffer, '\n') == -1 && buffer[0])
-		{
-			line = ft_gnlstrealloc(line, BUFFER_SIZE);
-			if (!line)
+			if (!ft_cheat(&line, buffer))
 				return (NULL);
-			ft_gnlstrcat(line, buffer, -1);
-		}
 		if (!buffer[0] && i == 1)
 			return (line);
 		else if (buffer[0] || i == 1)

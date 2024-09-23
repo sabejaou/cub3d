@@ -6,11 +6,19 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 09:55:29 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:02:43 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incl/cub3d.h"
+
+void	ft_free_2(t_view *view)
+{
+	mlx_destroy_image(view->mlx_ptr, view->img);
+	mlx_destroy_window(view->mlx_ptr, view->win_ptr);
+	mlx_destroy_display(view->mlx_ptr);
+	free(view->mlx_ptr);
+}
 
 void	ft_free_map_end_normal(t_view *view)
 {
@@ -34,10 +42,7 @@ void	ft_free_map_end_normal(t_view *view)
 	}
 	if (view->map.tab)
 		free(view->map.tab);
-	mlx_destroy_image(view->mlx_ptr, view->img);
-	mlx_destroy_window(view->mlx_ptr, view->win_ptr);
-	mlx_destroy_display(view->mlx_ptr);
-	free(view->mlx_ptr);
+	ft_free_2(view);
 	if (view)
 		free(view);
 	exit(0);
@@ -93,26 +98,6 @@ int	ft_error(t_errcd err, t_view *view)
 	if (err != NO_ERROR)
 		ft_free_map(view);
 	return (err);
-}
-
-void	ft_print_map_types(t_view *view)
-{
-	size_t	x;
-	size_t	y;
-
-	x = 0;
-	y = 0;
-	while (y < view->map.maxy)
-	{
-		while (x < view->map.maxx)
-		{
-			printf("%d", view->map.tab[y][x].type);
-			x++;
-		}
-		printf("\n");
-		y++;
-		x = 0;
-	}
 }
 
 int	main(int ac, char **av)
