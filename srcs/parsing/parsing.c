@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/20 01:43:56 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 01:20:06 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,8 +245,14 @@ t_maptype ft_define_map_type(char c)
 		return (WALL);
 	else if (c == ' ' || c == '\n')
 		return (VOID);
-	else if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
-		return (SPAWN);
+	else if (c == 'N')
+		return (SPAWN_NORTH);
+	else if (c == 'W')
+		return (SPAWN_WEST);
+	else if (c == 'E')
+		return (SPAWN_EAST);
+	else if (c == 'S')
+		return (SPAWN_SOUTH);
 	else
 		return (INVALID);
 }
@@ -269,10 +275,11 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 			if ((*line)[x])
 			{
 				view->map.tab[y][x].type = ft_define_map_type((*line)[x]);
-				if (view->map.tab[y][x].type == SPAWN)
+				if (view->map.tab[y][x].type >= SPAWN_NORTH && view->map.tab[y][x].type <= SPAWN_WEST)
 				{
 					view->player.x = x;
 					view->player.y = y;
+					view->player.z = view->map.tab[y][x].type;
 				}
 				x++;
 			}

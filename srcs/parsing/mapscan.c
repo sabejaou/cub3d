@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 17:52:00 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/20 01:47:38 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 00:55:54 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ t_errcd ft_is_valid(t_tab3x1 map, size_t y, size_t x)
 {
 	if (y == 0 || y == map.maxy - 1 || x == 0 || x == map.maxx - 1)
 		return (ERR_INVALID_MAP);
-	if (map.tab[y - 1][x].type > 2 || map.tab[y + 1][x].type > 2)
+	if (map.tab[y - 1][x].type > WALL || map.tab[y + 1][x].type > WALL)
 		return (ERR_INVALID_MAP);
-	if (map.tab[y][x - 1].type > 2 || map.tab[y][x + 1].type > 2)
+	if (map.tab[y][x - 1].type > WALL || map.tab[y][x + 1].type > WALL)
 		return (ERR_INVALID_MAP);
 	return (NO_ERROR);
 }
@@ -33,7 +33,7 @@ t_errcd ft_is_valid_next(t_vec3x1 v, t_tab3x1 *map, size_t y, size_t x)
 		map->is_ground = 1;
 		return(ft_is_valid(*map, y, x));
 	}
-	else if (v.type == SPAWN)
+	else if (v.type >= SPAWN_NORTH && v.type <= SPAWN_WEST)
 	{
 		(map->player_count)++;
 		return(ft_is_valid(*map, y, x));

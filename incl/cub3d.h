@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/20 02:39:24 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 04:42:19 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,31 @@
 # include "errors_cub3d.h"
 # define WINDOW_WIDTH 1920
 # define WINDOW_HEIGHT 1080
+# define ROTATE_SPEED M_PI/30
 # define LEFT_ARROW_KEY 65430
 # define RIGHT_ARROW_KEY 65432
 # define UP_ARROW_KEY 65437
 # define DOWN_ARROW_KEY 65433
 # define ESC_KEY 65307
-# define W_KEY    65362
-# define S_KEY  65364
-# define A_KEY 65361
-# define D_KEY 65363
+# define W_ARROW_KEY    65362
+# define S_ARROW_KEY  65364
+# define A_ARROW_KEY 65361
+# define D_ARROW_KEY 65363
+# define W_KEY    119
+# define S_KEY  115
+# define A_KEY 97
+# define D_KEY 100
 
 typedef enum e_maptype
 {
 	GROUND = 0,
-	SPAWN   = 1,
-	WALL   = 2,
-	VOID = 3,
-	INVALID = 4,
+	SPAWN_NORTH   = 1,
+	SPAWN_SOUTH   = 2,
+	SPAWN_EAST   = 3,
+	SPAWN_WEST   = 4,
+	WALL   = 5,
+	VOID = 6,
+	INVALID = 7,
 } t_maptype;
 
 typedef struct s_vec3x1
@@ -65,17 +73,19 @@ typedef struct s_tab3x1
 typedef struct s_view
 {
 	t_tab3x1	map;
-	char		*text[4];
+   void *textures[4];
+    char *text[4];
+    int texture_width[4];
+    int texture_height[4];
 	t_vec3x1	fccolor[2];
 	t_vec3x1	player;
+	float		playerangle;
 	int			bpp;
 	int			sl;
 	int			endian;
 	void		*mlx_ptr;
 	void		*win_ptr;
 	void		*img;
-	void		*player_img;
-	void		*player_addr;
 	char		*addr;
 }	t_view;
 
