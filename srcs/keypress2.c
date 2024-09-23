@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:39:15 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:47:46 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/09/23 09:34:09 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,13 @@ void	calculate_new_position(t_move_data *data, t_view *view, int keycode)
 	}
 	else if (keycode == A_KEY)
 	{
-		data->new_x -= sin(view->playerangle) * data->move_speed;
-		data->new_y += cos(view->playerangle) * data->move_speed;
+		data->new_x += sin(view->playerangle) * data->move_speed;
+		data->new_y -= cos(view->playerangle) * data->move_speed;
 	}
 	else if (keycode == D_KEY)
 	{
-		data->new_x += sin(view->playerangle) * data->move_speed;
-		data->new_y -= cos(view->playerangle) * data->move_speed;
+		data->new_x -= sin(view->playerangle) * data->move_speed;
+		data->new_y += cos(view->playerangle) * data->move_speed;
 	}
 }
 
