@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 13:41:44 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 10:00:56 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:42:57 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,5 @@ char	*get_next_line(int fd, char *oldline, int reset)
 		else if (buffer[0] || i == 1)
 			return (ft_gnlend(&line, buffer, &i));
 	}
-	return (NULL);
+	return (free(line), NULL);
 }

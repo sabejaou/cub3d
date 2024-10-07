@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:31:10 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 09:13:44 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/07 17:14:31 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ bool	ft_str_is_whitespace(char *str)
 
 bool	ft_good_extension(char *ext, char *ext_expected, int len)
 {
-	if (!ft_strncmp(ext_expected, ext, len))
+	if (!*ext || !ft_strncmp(ext_expected, ext, len))
 	{
 		if (ext)
 			free(ext);
@@ -49,6 +49,8 @@ t_errcd	ft_verify_textures(char *compass, char *line, char **structtext)
 	char	**split;
 
 	i = 0;
+	if (!line)
+		return(ERR_INVALID_MAP);
 	if (!ft_strncmp(compass, line, 3))
 	{
 		split = ft_split(line, ' ');

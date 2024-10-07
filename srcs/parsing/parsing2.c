@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:30:18 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/07 17:01:14 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/07 18:34:30 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_errcd	ft_verify_map_textures(int *fd, char **line, t_view *view)
 	ft_strlcpy(compass[1], "SO ", 4);
 	ft_strlcpy(compass[2], "WE ", 4);
 	ft_strlcpy(compass[3], "EA ", 4);
-	while (line && i < 4)
+	while (i < 4)
 	{
 		err = ft_verify_textures(compass[i], *line, &view->text[i]);
 		if (err)
