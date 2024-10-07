@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:30:18 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:56:30 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/07 17:01:14 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	ft_set_map_points_helper(t_view *view, char *line, size_t *y, size_t *x)
 			view->player.x = *x;
 			view->player.y = *y;
 			view->player.z = view->map.tab[*y][*x].type;
+			view->player.type = view->map.tab[*y][*x].type;
 		}
 		(*x)++;
 	}
