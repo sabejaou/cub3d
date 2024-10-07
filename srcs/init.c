@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:12:13 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/07 16:57:44 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/07 17:03:33 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,13 @@ t_errcd	init_view(t_view *view, char **av)
 	view->img = mlx_new_image(view->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
 	view->addr = mlx_get_data_addr(view->img, &view->bpp, &view->sl,
 			&view->endian);
-	printf("PLAYERTYPE:%d\n", view->player.type);
+	view->playerangle = 0;
 	if (view->player.type == SPAWN_NORTH)
 		view->playerangle = 3 * M_PI / 2;
 	else if (view->player.type == SPAWN_SOUTH)
 		view->playerangle = M_PI / 2;
 	else if (view->player.type == SPAWN_WEST)
 		view->playerangle = M_PI;
-	else
-		view->playerangle = 0;
 	load_textures(view);
 	return (err);
 }
