@@ -2,3 +2,4 @@
 *.out
 cub3d
 .vscode
+flake.nix
