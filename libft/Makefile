@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/04 15:56:34 by sabejaou          #+#    #+#              #
-#    Updated: 2024/09/18 14:12:22 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/10/10 19:31:35 by tsofien-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,7 @@ SRCS =  ft_memset.c     			\
 		ft_lstnew.c					\
 		ft_lstsize.c				\
 		get_next_line.c				\
+		ft_free_tab.c				\
 		get_next_line_utils.c		\
 			
 OBJS = ${SRCS:.c=.o}

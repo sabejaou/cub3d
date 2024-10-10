@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:31:10 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/07 17:14:31 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/10 19:37:35 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ t_errcd	ft_verify_textures(char *compass, char *line, char **structtext)
 
 	i = 0;
 	if (!line)
-		return(ERR_INVALID_MAP);
+		return (ERR_INVALID_MAP);
 	if (!ft_strncmp(compass, line, 3))
 	{
 		split = ft_split(line, ' ');
@@ -113,12 +113,17 @@ t_errcd	ft_verify_colors(char *compass, char *line, t_view *view, int j)
 		while (split[i])
 			i++;
 		if (i != 2)
+		{
+			ft_free_tab(split);
+			free(line);
 			return (ERR_COLOR_FORMAT);
+		}
 		ft_set_colors(split[1], view, j);
 		free(split[0]);
 		free(split[2]);
 		free(split);
 		return (NO_ERROR);
 	}
+	free(line);
 	return (ERR_ACCESS_TEXTURE);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 15:55:46 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/18 16:52:12 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/10 18:44:11 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),
 char			*ft_strdupp(char const *s, char c, int *i);
 int				ft_check_c(char c, char s);
 int				ft_count_c(char c, const char *s);
+void			ft_free_tab(char **tab);
 
 //gnl
 
