@@ -2,4 +2,5 @@
 *.out
 cub3d
 .vscode
-flake.nix
+*.nix
+*.lock
