@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 07:57:42 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 10:23:17 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:11:46 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	init_draw_data(t_draw_data *data, t_view *view, int squareproportion)
 {
-	data->player_pos.x = view->player.x / squareproportion;
-	data->player_pos.y = view->player.y / squareproportion;
+	data->player_pos.x = view->player.x / squareproportion + 0.1;
+	data->player_pos.y = view->player.y / squareproportion + 0.1;
 	data->fov = M_PI / 3;
 	data->ray_step = data->fov / WINDOW_WIDTH;
 	data->squareproportion = squareproportion;
