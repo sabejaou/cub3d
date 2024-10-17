@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:39:15 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 09:34:09 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:39:33 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	init_move_data(t_move_data *data, t_view *view)
 	else
 		data->squareproportion = WINDOW_HEIGHT / view->map.maxx;
 	data->move_speed = 5.0f;
-	data->hitbox_radius = data->squareproportion * 0.3f;
+	data->hitbox_radius = data->squareproportion * 0.09f;
 	data->new_x = view->player.x;
 	data->new_y = view->player.y;
 }
@@ -77,7 +77,7 @@ int	is_collision(t_move_data *data, size_t check_x, size_t check_y)
 	dy = fmaxf(fabsf(data->new_y - wall_center_y)
 			- data->squareproportion / 2, 0);
 	distance = sqrtf(dx * dx + dy * dy);
-	if (distance < data->hitbox_radius)
+	if (distance <= data->hitbox_radius)
 		return (1);
 	return (0);
 }
