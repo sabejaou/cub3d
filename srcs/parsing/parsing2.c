@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:30:18 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/10 20:17:04 by tsofien-         ###   ########.fr       */
+/*   Updated: 2024/10/18 19:24:21 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,7 @@ t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view,
 		return (ERR_ALLOC);
 	while (y < view->map.maxy)
 	{
-		if (view->map.maxx >= view->map.maxy)
-			view->map.tab[y] = ft_calloc(view->map.maxx, sizeof(t_vec3x1));
-		else
-			view->map.tab[y] = ft_calloc(view->map.maxy, sizeof(t_vec3x1));
+		allocate_taby(view, y);
 		if (!view->map.tab[y++])
 			return (ft_free_map_partial(view, y), ERR_ALLOC);
 	}

@@ -6,11 +6,19 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:32:03 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 08:59:26 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/18 19:24:26 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../incl/cub3d.h"
+
+void	allocate_taby(t_view *view, size_t y)
+{
+	if (view->map.maxx >= view->map.maxy)
+		view->map.tab[y] = ft_calloc(view->map.maxx, sizeof(t_vec3x1));
+	else
+		view->map.tab[y] = ft_calloc(view->map.maxy, sizeof(t_vec3x1));
+}
 
 void	ft_free_map_partial(t_view *view, size_t y)
 {

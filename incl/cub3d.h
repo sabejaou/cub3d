@@ -6,7 +6,7 @@
 /*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/09/23 10:22:52 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/18 19:25:27 by sabejaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ typedef struct s_drawlineutils
 }	t_drawlineutils;
 
 // Parsing
+void			allocate_taby(t_view *view, size_t y);
 t_errcd			ft_create_map(char *path, t_view *view);
 t_errcd			ft_scanmap(t_tab3x1 map);
 void			ft_draw3d_view(t_view *view, int squareproportion);
