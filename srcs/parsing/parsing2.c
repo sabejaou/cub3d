@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:30:18 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/18 19:24:21 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/19 19:05:15 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,29 @@
 t_errcd	ft_verify_map_textures(int *fd, char **line, t_view *view)
 {
 	int		i;
-	char	compass[4][4];
 	t_errcd	err;
 
 	err = NO_ERROR;
-	i = 0;
-	ft_strlcpy(compass[0], "NO ", 4);
-	ft_strlcpy(compass[1], "SO ", 4);
-	ft_strlcpy(compass[2], "WE ", 4);
-	ft_strlcpy(compass[3], "EA ", 4);
-	while (i < 4)
+	i = -1;
+	while (++i < 4)
 	{
-		err = ft_verify_textures(compass[i], *line, &view->text[i]);
+		err = ft_verify_textures(*line, &view->text[i]);
 		if (err)
-			return (err);
+			return (free(*line), err);
 		*line = get_next_line(*fd, *line, 0);
+		while (ft_str_is_whitespace(*line))
+			*line = get_next_line(*fd, *line, 0);
 		if (!(*line))
 			return (ERR_INVALID_MAP);
-		i++;
 	}
+	err = changetxtidx(&view->txtvrf, view);
+	if (err)
+		return (free(*line), err);
 	err = ft_verify_map_colors(fd, view, line);
+	while (ft_str_is_whitespace(*line))
+		*line = get_next_line(*fd, *line, 0);
+	if (!ft_is_architecture_part(*line))
+		return (free(*line), err);
 	return (err);
 }
 
@@ -67,7 +70,7 @@ void	ft_set_map_points_helper(t_view *view, char *line, size_t *y, size_t *x)
 	}
 }
 
-void	ft_set_map_points(int *fd, char **line, t_view *view)
+t_errcd	ft_set_map_points(int *fd, char **line, t_view *view)
 {
 	size_t	y;
 	size_t	x;
@@ -85,6 +88,7 @@ void	ft_set_map_points(int *fd, char **line, t_view *view)
 		y++;
 		x = 0;
 	}
+	return (NO_ERROR);
 }
 
 t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view,
@@ -112,7 +116,7 @@ t_errcd	ft_verify_map_architecture(int *fd, char **line, t_view *view,
 		return (ERR_ACCESS_MAP);
 	get_next_line(0, NULL, 1);
 	*line = get_next_line(*fd, *line, 0);
-	ft_set_map_points(fd, line, view);
+	err = ft_set_map_points(fd, line, view);
 	return (NO_ERROR);
 }
 

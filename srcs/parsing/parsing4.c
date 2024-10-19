@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing4.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:32:03 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/18 19:24:26 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/19 19:26:16 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,29 @@ void	ft_free_map_partial(t_view *view, size_t y)
 
 t_errcd	ft_verify_map_colors(int *fd, t_view *view, char **line)
 {
-	int		i;
-	char	compass[2][3];
-	t_errcd	err;
+	t_vmapcols	a;
 
-	err = NO_ERROR;
-	i = 0;
-	ft_strlcpy(compass[0], "F ", 3);
-	ft_strlcpy(compass[1], "C ", 3);
-	while (ft_str_is_whitespace(*line))
-		*line = get_next_line(*fd, *line, 0);
-	while (line && i != 2)
+	init_vmapcols(&a, fd, line);
+	while (line && a.i != 2 && a.i != -1)
 	{
-		err = ft_verify_colors(compass[i], *line, view, i);
-		if (err)
-			return (err);
+		a.err = ft_verify_colors(a.compass[a.i], line, view, a.i);
+		if (a.err)
+			return (a.err);
 		*line = get_next_line(*fd, *line, 0);
+		while (ft_str_is_whitespace(*line))
+			*line = get_next_line(*fd, *line, 0);
 		if (!(*line))
 			return (ERR_INVALID_MAP);
-		i++;
+		if (a.sense)
+			a.i--;
+		else
+			a.i++;
 	}
-	return (err);
+	while (ft_str_is_whitespace(*line))
+		*line = get_next_line(*fd, *line, 0);
+	if (!ft_is_architecture_part(*line))
+		return (ERR_INVALID_MAP);
+	return (a.err);
 }
 
 bool	ft_is_map_char(char c)

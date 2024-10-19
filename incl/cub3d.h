@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 03:33:33 by sbejaoui          #+#    #+#             */
-/*   Updated: 2024/10/18 19:25:27 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/19 20:09:07 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 # include "../libmlx/mlx.h"
 # include "../libft/libft.h"
 # include "errors_cub3d.h"
-# define WINDOW_WIDTH 1920
-# define WINDOW_HEIGHT 1080
+# define WINDOW_WIDTH 1080
+# define WINDOW_HEIGHT 720
 # define ROTATE_SPEED 0.10471975512
 # define LEFT_ARROW_KEY 65430
 # define RIGHT_ARROW_KEY 65432
@@ -51,6 +51,15 @@ typedef enum e_maptype
 	VOID = 6,
 	INVALID = 7,
 }	t_maptype;
+
+typedef enum e_cardinalenum
+{
+	INVALIDCRD = 0,
+	NORTH = 1,
+	SOUTH = 2,
+	EAST = 3,
+	WEST = 4,
+}	t_cardinalenum;
 
 typedef struct s_vec3x1
 {
@@ -142,10 +151,19 @@ typedef struct s_tab3x1
 	bool		is_ground;
 }	t_tab3x1;
 
+typedef struct s_cardinal
+{
+	bool	no;
+	bool	so;
+	bool	we;
+	bool	ea;
+}	t_cardinal;
+
 typedef struct s_view
 {
 	t_tab3x1	map;
 	void		*textures[4];
+	int			nocollide;
 	char		*text[4];
 	int			texture_width[4];
 	int			texture_height[4];
@@ -161,6 +179,7 @@ typedef struct s_view
 	void		*win_ptr;
 	void		*img;
 	char		*addr;
+	t_cardinal	txtvrf;
 }	t_view;
 
 typedef struct s_drawmaputils
@@ -184,9 +203,21 @@ typedef struct s_drawlineutils
 	double	x;
 	int		i;
 }	t_drawlineutils;
+typedef struct s_vmapcols
+{
+	int		i;
+	char	compass[2][3];
+	bool	sense;
+	t_errcd	err;
+}	t_vmapcols;
 
 // Parsing
+void			replacewhitespace(char *str);
+void			ft_free_2(t_view *view);
+void			init_vmapcols(t_vmapcols *a, int *fd, char **line);
 void			allocate_taby(t_view *view, size_t y);
+bool			colorisvalid(char *str);
+t_errcd			changetxtidx(t_cardinal *vrf, t_view *view);
 t_errcd			ft_create_map(char *path, t_view *view);
 t_errcd			ft_scanmap(t_tab3x1 map);
 void			ft_draw3d_view(t_view *view, int squareproportion);
@@ -213,10 +244,9 @@ t_errcd			ft_verify_map(int *fd, t_view *view, char *path);
 bool			ft_str_is_whitespace(char *str);
 t_errcd			ft_size_map_y(char *path, size_t *maxy, size_t *maxx);
 t_errcd			ft_verify_colors(char *compass,
-					char *line, t_view *view, int j);
+					char **line, t_view *view, int j);
 t_maptype		ft_define_map_type(char c);
-t_errcd			ft_verify_textures(char *compass,
-					char *line, char **structtext);
+t_errcd			ft_verify_textures(char *line, char **structtext);
 void			calculate_new_position(t_move_data *data, t_view *view,
 					int keycode);
 int				check_wall_collision(t_move_data *data, t_view *view,

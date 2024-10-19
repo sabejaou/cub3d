@@ -6,11 +6,10 @@
 /*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:31:10 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/10 19:37:35 by tsofien-         ###   ########.fr       */
+/*   Updated: 2024/10/19 20:07:44 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../incl/cub3d.h"
 #include "../../incl/cub3d.h"
 
 bool	ft_str_is_whitespace(char *str)
@@ -43,31 +42,30 @@ bool	ft_good_extension(char *ext, char *ext_expected, int len)
 	return (0);
 }
 
-t_errcd	ft_verify_textures(char *compass, char *line, char **structtext)
+t_errcd	ft_verify_textures(char *line, char **structtext)
 {
 	int		i;
+	int		j;
 	char	**split;
 
 	i = 0;
+	j = -1;
 	if (!line)
 		return (ERR_INVALID_MAP);
-	if (!ft_strncmp(compass, line, 3))
-	{
-		split = ft_split(line, ' ');
-		if (!split)
-			return (ERR_ALLOC);
-		while (split[i])
-			i++;
-		if (i != 2 || !ft_good_extension(ft_substr(split[1],
-					ft_strlen(split[1]) - 5, 5), ".xpm\n", 6))
-			return (ERR_FORMAT_TEXTURE);
-		*structtext = split[1];
-		free(split[0]);
-		free(split[2]);
-		free(split);
-		return (NO_ERROR);
-	}
-	return (ERR_ACCESS_TEXTURE);
+	while (line[++j])
+		if (line[j] > 8 && line[j] < 14)
+			line[j] = ' ';
+	split = ft_split(line, ' ');
+	if (!split)
+		return (ERR_ALLOC);
+	while (split[i])
+		i++;
+	if (!ft_good_extension(ft_substr(split[i],
+				ft_strlen(split[i]) - 5, 5), ".xpm\n", 6))
+		return (free(line), ft_free_tab(split), ERR_FORMAT_TEXTURE);
+	*structtext = ft_substr(line, 0, ft_strlen(line) - 1);
+	ft_free_tab(split);
+	return (NO_ERROR);
 }
 
 t_errcd	ft_set_colors(char *line, t_view *view, int j)
@@ -76,54 +74,52 @@ t_errcd	ft_set_colors(char *line, t_view *view, int j)
 	char	**split;
 
 	i = 0;
+	if (!colorisvalid(line))
+		return (free(line), ERR_COLOR_FORMAT);
 	split = ft_split(line, ',');
+	free(line);
+	line = NULL;
 	if (!split)
 		return (ERR_ALLOC);
 	while (split[i])
 		i++;
 	if (i != 3)
-		return (ERR_COLOR_FORMAT);
-	(view)->fccolor[j].r = ft_atoi(split[0]);
-	(view)->fccolor[j].g = ft_atoi(split[1]);
-	(view)->fccolor[j].b = ft_atoi(split[2]);
+		return (ft_free_tab(split), ERR_COLOR_FORMAT);
+	(view)->fccolor[j].r = abs(ft_atoi(split[0])) % 256;
+	(view)->fccolor[j].g = abs(ft_atoi(split[1])) % 256;
+	(view)->fccolor[j].b = abs(ft_atoi(split[2])) % 256;
 	if (j == 1)
 		view->ceil = &(view)->fccolor[j];
 	else
 		view->floor = &(view)->fccolor[j];
-	free(split[0]);
-	free(split[1]);
-	free(split[2]);
-	free(split[3]);
-	free(split);
-	free(line);
+	ft_free_tab(split);
 	return (NO_ERROR);
 }
 
-t_errcd	ft_verify_colors(char *compass, char *line, t_view *view, int j)
+t_errcd	ft_verify_colors(char *compass, char **line, t_view *view, int j)
 {
 	int		i;
 	char	**split;
+	t_errcd	err;
 
 	i = 0;
-	if (!ft_strncmp(compass, line, 2))
+	err = NO_ERROR;
+	if (!ft_strncmp(compass, *line, 2))
 	{
-		split = ft_split(line, ' ');
+		replacewhitespace(*line);
+		split = ft_split(*line, ' ');
+		free(*line);
+		*line = NULL;
 		if (!split)
 			return (ERR_ALLOC);
 		while (split[i])
 			i++;
 		if (i != 2)
-		{
-			ft_free_tab(split);
-			free(line);
-			return (ERR_COLOR_FORMAT);
-		}
-		ft_set_colors(split[1], view, j);
-		free(split[0]);
-		free(split[2]);
-		free(split);
-		return (NO_ERROR);
+			return (ft_free_tab(split), ERR_COLOR_FORMAT);
+		err = ft_set_colors(ft_strdup(split[1]), view, j);
+		return (ft_free_tab(split), err);
 	}
-	free(line);
+	free(*line);
+	*line = NULL;
 	return (ERR_ACCESS_TEXTURE);
 }

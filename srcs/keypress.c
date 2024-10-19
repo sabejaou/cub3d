@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keypress.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 08:00:43 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 09:33:50 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/19 16:19:33 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	check_collision(t_move_data *data, t_view *view)
 	int		dy;
 	int		dx;
 
+	if (view->nocollide % 2 == 0)
+		return (0);
 	map_x = data->new_x / data->squareproportion;
 	map_y = data->new_y / data->squareproportion;
 	dy = -1;
@@ -80,6 +82,8 @@ int	key_press(int keycode, t_view *view)
 		handle_rotation(view, keycode);
 	else if (keycode == ESC_KEY)
 		ft_free_map_end_normal(view);
+	else if (keycode == 112)
+		view->nocollide++;
 	update_display(view, data.squareproportion);
 	return (0);
 }

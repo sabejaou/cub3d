@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/06 20:10:07 by sbejaoui          #+#    #+#              #
-#    Updated: 2024/09/23 10:25:06 by sabejaou         ###   ########.fr        #
+#    Updated: 2024/10/19 18:59:56 by tsofien-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ SRCS_PARSING=\
 		parsing2.c \
 		parsing3.c \
 		parsing4.c \
+		parsing5.c \
 		mapscan.c \
 
 SRCS += $(addprefix draw/, $(SRCS_DRAW))

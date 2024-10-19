@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sabejaou <sabejaou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 01:04:57 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/09/23 10:02:43 by sabejaou         ###   ########.fr       */
+/*   Updated: 2024/10/19 19:59:46 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 
 void	ft_free_2(t_view *view)
 {
-	mlx_destroy_image(view->mlx_ptr, view->img);
-	mlx_destroy_window(view->mlx_ptr, view->win_ptr);
+	if (!view->mlx_ptr)
+		return ;
+	if (view->img)
+		mlx_destroy_image(view->mlx_ptr, view->img);
+	if (view->win_ptr)
+		mlx_destroy_window(view->mlx_ptr, view->win_ptr);
 	mlx_destroy_display(view->mlx_ptr);
 	free(view->mlx_ptr);
 }
@@ -66,6 +70,7 @@ void	ft_free_map(t_view *view)
 			free(view->text[y]);
 		y++;
 	}
+	ft_free_2(view);
 	if (view->map.tab)
 		free(view->map.tab);
 	if (view)
@@ -95,8 +100,9 @@ int	ft_error(t_errcd err, t_view *view)
 		ft_putendl_fd("Cub3d: Map extension is wrong\n", 2);
 	if (err == ERR_MLX)
 		ft_putendl_fd("Cub3d: MLX_ERROR\n", 2);
-	if (err != NO_ERROR)
+	if (err != NO_ERROR && view)
 		ft_free_map(view);
+	view = NULL;
 	return (err);
 }
 

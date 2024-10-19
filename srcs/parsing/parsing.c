@@ -6,7 +6,7 @@
 /*   By: tsofien- <tsofien-@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 12:16:08 by sabejaou          #+#    #+#             */
-/*   Updated: 2024/10/10 17:22:04 by tsofien-         ###   ########.fr       */
+/*   Updated: 2024/10/19 17:55:23 by tsofien-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ t_errcd	ft_create_map(char *path, t_view *view)
 	if (!ft_good_extension(ft_substr(path, ft_strlen(path) - 4, 4), ".cub", 5))
 		return (ERR_EXTENSION_MAP);
 	err = ft_parse_map(path, view);
-	if (err != NO_ERROR)
+	if (err)
 		return (err);
 	i = 0;
 	while (i <= 3)
